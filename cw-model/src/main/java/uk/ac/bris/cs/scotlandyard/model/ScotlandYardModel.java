@@ -63,6 +63,14 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			}
 		set.add(configuration.location);
 		}
+
+		Set<Colour> setColours = new Set<>();
+		for (PlayerConfiguration configuration : configurations){
+			if(setColours.contains(configuration.colour)){
+				throw new IllegalArgumentException("Duplicate colour");
+			}
+		}
+		setColour.add(configuration.colour);
 	}
 
 	@Override
