@@ -163,7 +163,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testNullRoundsShouldThrow() {
+	public void testNullRoundsShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				null,
 				defaultGraph(),
@@ -181,7 +181,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testNullMapShouldThrow() {
+	public void testNullMapShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				rounds(true),
 				(Graph<Integer, Transport>) null,

@@ -35,6 +35,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
 		this.rounds = requireNonNull(rounds);
+		this.graph = requireNonNull(graph);
 	}
 
 	@Override
