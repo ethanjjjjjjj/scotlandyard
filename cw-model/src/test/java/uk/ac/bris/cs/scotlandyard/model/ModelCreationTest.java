@@ -51,7 +51,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	@After public void tearDown() { harness.forceReleaseShutdownLock(); }
 
 	@Test
-	public void testNullMrXShouldThrow() {
+	public void testNullMrXShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(null, doNothingPlayer(RED, 1)))
 				.isInstanceOf(NullPointerException.class);
 	}
@@ -71,7 +71,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testNoMrXShouldThrow() {
+	public void testNoMrXShouldThrow() { //COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLUE, 1),
 				doNothingPlayer(RED, 2))).isInstanceOf(IllegalArgumentException.class);
@@ -85,7 +85,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testSwappedMrXShouldThrow() {
+	public void testSwappedMrXShouldThrow() { //COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLUE, 1),
 				doNothingPlayer(BLACK, 2))).isInstanceOf(IllegalArgumentException.class);
