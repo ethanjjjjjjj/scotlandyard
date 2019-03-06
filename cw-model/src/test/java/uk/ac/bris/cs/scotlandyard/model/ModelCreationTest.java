@@ -78,7 +78,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testMoreThanOneMrXShouldThrow() {
+	public void testMoreThanOneMrXShouldThrow() {//DOING
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLACK, 1),
 				doNothingPlayer(BLACK, 2))).isInstanceOf(IllegalArgumentException.class);
@@ -92,7 +92,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testDuplicateDetectivesShouldThrow() {
+	public void testDuplicateDetectivesShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLACK, 1),
 				doNothingPlayer(BLUE, 2),
@@ -100,14 +100,14 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testLocationOverlapBetweenMrXAndDetectiveShouldThrow() {
+	public void testLocationOverlapBetweenMrXAndDetectiveShouldThrow() { //COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLACK, 1),
 				doNothingPlayer(BLUE, 1))).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
-	public void testLocationOverlapBetweenDetectivesShouldThrow() {
+	public void testLocationOverlapBetweenDetectivesShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLACK, 1),
 				doNothingPlayer(BLUE, 2),
@@ -190,14 +190,14 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testTwoPlayerDoesNotThrow() {
+	public void testTwoPlayerDoesNotThrow() {//COMPLETED
 		createGame(
 				doNothingMrX(),
 				doNothingBlue());
 	}
 
 	@Test
-	public void testSixPlayerDoesNotThrow() {
+	public void testSixPlayerDoesNotThrow() {//COMPLETED
 		createGame(
 				doNothingMrX(),
 				doNothingRed(),

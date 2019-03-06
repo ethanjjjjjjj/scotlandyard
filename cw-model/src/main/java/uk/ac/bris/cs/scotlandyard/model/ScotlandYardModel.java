@@ -48,6 +48,21 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		if (mrX.colour != BLACK) {
 			throw new IllegalArgumentException("MrX should be Black");
 		}
+
+		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
+		for (PlayerConfiguration configuration : restOfTheDetectives){
+			configurations.add(requireNonNull(configuration));
+		}
+		configurations.add(0, firstDetective);
+		configurations.add(0, mrX);
+
+		Set<Integer> set = new HashSet<>();
+		for (PlayerConfiguration configuration : configurations) {
+			if (set.contains(configuration.location)){
+				throw new IllegalArgumentException("Duplicate location");
+			}
+		set.add(configuration.location);
+		}
 	}
 
 	@Override
@@ -127,5 +142,5 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		// TODO
 		throw new RuntimeException("Implement me");
 	}
-
 }
+
