@@ -57,13 +57,13 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testNullDetectiveShouldThrow() {
+	public void testNullDetectiveShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(doNothingPlayer(BLACK, 1), null))
 				.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test
-	public void testAnyNullDetectiveShouldThrow() {
+	public void testAnyNullDetectiveShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLACK, 1),
 				doNothingPlayer(BLUE, 2),
