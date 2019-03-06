@@ -154,7 +154,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testEmptyRoundsShouldThrow() {
+	public void testEmptyRoundsShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				emptyList(),
 				defaultGraph(),
@@ -172,7 +172,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testEmptyMapShouldThrow() {
+	public void testEmptyMapShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				emptyList(),
 				new UndirectedGraph<>(),

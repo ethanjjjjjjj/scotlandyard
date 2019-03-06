@@ -36,6 +36,13 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			PlayerConfiguration... restOfTheDetectives) {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
+		if (rounds.isEmpty()) {
+			throw new IllegalArgumentException("Empty rounds");
+		}
+		
+		if (graph.isEmpty()){
+			throw new IllegalArgumentException("Empty grpah");
+		}
 	}
 
 	@Override
