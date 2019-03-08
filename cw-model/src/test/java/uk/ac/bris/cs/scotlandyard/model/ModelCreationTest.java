@@ -78,7 +78,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testMoreThanOneMrXShouldThrow() {//DOING
+	public void testMoreThanOneMrXShouldThrow() {//COMPLETED
 		assertThatThrownBy(() -> createGame(
 				doNothingPlayer(BLACK, 1),
 				doNothingPlayer(BLACK, 2))).isInstanceOf(IllegalArgumentException.class);
