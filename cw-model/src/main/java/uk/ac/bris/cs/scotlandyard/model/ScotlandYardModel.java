@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import uk.ac.bris.cs.gamekit.graph.Edge;
 import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
+import uk.ac.bris.cs.scotlandyard.model.Ticket;
 
 
 // TODO implement all methods and pass all tests
@@ -77,12 +78,29 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	}
 	
 	public void checkTickets(ArrayList<PlayerConfiguration> configs){
+
+		
+
 		for(PlayerConfiguration player:configs){
-			if(player.colour.isDetective() && (player.tickets.get(DOUBLE)!=0 || player.tickets.get(SECRET)!=0 )){
-				throw new IllegalArgumentException("Detective has invalid tickets");
+			System.out.println(player.tickets.size());
+			for(Ticket t:player.tickets.keySet()){
+				System.out.println(t);
+				if(t==Ticket.TAXI){
+					System.out.println("YEs this is a taxi ticket");
+				}}
 				
+			if(player.colour.isDetective() && player.tickets.containsKey(DOUBLE) ||  player.tickets.containsKey(SECRET)){
+				throw new IllegalArgumentException("Detective has invalid tickets");
+			}
+			if(player.colour.isDetective()  && (!(player.tickets.containsKey(Ticket.TAXI)) || !(player.tickets.containsKey(Ticket.BUS)) || !(player.tickets.containsKey(Ticket.UNDERGROUND)) )){
+				
+				throw new IllegalArgumentException("Detective Missing tickets");
+			}
+			if(player.colour.isMrX() && (!(player.tickets.containsKey(Ticket.TAXI)) || !(player.tickets.containsKey(Ticket.BUS)) || !(player.tickets.containsKey(Ticket.UNDERGROUND))|| !(player.tickets.containsKey(Ticket.DOUBLE))|| !(player.tickets.containsKey(Ticket.SECRET)))){
+				throw new IllegalArgumentException("Mr X Missing tickets");
 			}
 		}
+		
 	}
 
 

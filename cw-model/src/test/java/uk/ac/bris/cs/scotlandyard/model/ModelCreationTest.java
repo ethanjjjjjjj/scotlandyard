@@ -133,7 +133,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testDetectiveMissingAnyTicketsShouldThrow() {
+	public void testDetectiveMissingAnyTicketsShouldThrow() {//COMPLETED
 		Map<Ticket, Integer> tickets = new HashMap<>();
 		tickets.put(Ticket.TAXI, 1);
 		PlayerConfiguration blue = new Builder(BLUE).using(dummyPlayer())
@@ -143,7 +143,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testMrXMissingAnyTicketsShouldThrow() {
+	public void testMrXMissingAnyTicketsShouldThrow() {//COMPLETED
 		Map<Ticket, Integer> tickets = new HashMap<>();
 		tickets.put(Ticket.SECRET, 1);
 		tickets.put(Ticket.DOUBLE, 1);
