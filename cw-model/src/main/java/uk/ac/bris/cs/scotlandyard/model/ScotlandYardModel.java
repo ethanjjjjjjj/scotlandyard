@@ -82,13 +82,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 
 		for(PlayerConfiguration player:configs){
-			System.out.println(player.tickets.size());
-			for(Ticket t:player.tickets.keySet()){
-				System.out.println(t);
-				if(t==Ticket.TAXI){
-					System.out.println("YEs this is a taxi ticket");
-				}}
-				
 			if(player.colour.isDetective() && player.tickets.containsKey(DOUBLE) ||  player.tickets.containsKey(SECRET)){
 				throw new IllegalArgumentException("Detective has invalid tickets");
 			}
