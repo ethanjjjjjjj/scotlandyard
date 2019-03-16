@@ -40,7 +40,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
-		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
 
 		if (rounds.isEmpty()) {
 			throw new IllegalArgumentException("Empty rounds");
@@ -54,13 +53,15 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			throw new IllegalArgumentException("MrX should be Black");
 		}
 
+		//MrX, the first detective, and the rest of the detectives are added to one arraylist so it
+		//it easier to iterate over all of them at once.
+		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
 		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
 		for (PlayerConfiguration configuration : restOfTheDetectives){
 			configurations.add(requireNonNull(configuration));
 		}
 		configurations.add(0, firstDetective);
 		configurations.add(0, mrX);
-
 		this.players = configurations;
 		
 		checkTickets(players);
