@@ -239,7 +239,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetGraphIsImmutable() {
+	public void testGetGraphIsImmutable() { //COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(true, false),
 				new UndirectedGraph<>(defaultGraph()),

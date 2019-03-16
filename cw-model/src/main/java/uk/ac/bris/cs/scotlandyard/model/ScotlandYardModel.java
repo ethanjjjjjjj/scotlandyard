@@ -173,8 +173,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Graph<Integer, Transport> getGraph() {
-		// TODO
-		throw new RuntimeException("Implement me");
+		ImmutableGraph<Integer, Transport> iGraph = new ImmutableGraph<>(graph);
+		return iGraph;
 	}
 }
 
