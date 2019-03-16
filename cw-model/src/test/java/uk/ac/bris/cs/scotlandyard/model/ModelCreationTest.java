@@ -208,7 +208,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetRoundsMatchesSupplied() {
+	public void testGetRoundsMatchesSupplied() { //COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(true, false, true, true),
 				defaultGraph(),
@@ -229,7 +229,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetGraphMatchesSupplied() {
+	public void testGetGraphMatchesSupplied() { //COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(true, false),
 				defaultGraph(),
