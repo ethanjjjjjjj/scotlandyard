@@ -71,7 +71,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 		
 
-		//checks whether the detective has invalid tickets
+		//checks whether the detective pr MrX has invalid tickets
 		checkTickets(configurations);
 
 		
@@ -82,9 +82,13 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 
 		for(PlayerConfiguration player:configs){
-			if(player.colour.isDetective() && player.tickets.containsKey(DOUBLE) ||  player.tickets.containsKey(SECRET)){
+			if(player.colour.isDetective() && (player.tickets.get(DOUBLE) != 0 ||  player.tickets.get(SECRET) != 0)){
+				System.out.println(player.tickets.get(DOUBLE));
 				throw new IllegalArgumentException("Detective has invalid tickets");
 			}
+			/*if(player.colour.isDetective() && player.tickets.containsKey(DOUBLE) ||  player.tickets.containsKey(SECRET)){
+				throw new IllegalArgumentException("Detective has invalid tickets");
+			}*/
 			if(player.colour.isDetective()  && (!(player.tickets.containsKey(Ticket.TAXI)) || !(player.tickets.containsKey(Ticket.BUS)) || !(player.tickets.containsKey(Ticket.UNDERGROUND)) )){
 				
 				throw new IllegalArgumentException("Detective Missing tickets");
