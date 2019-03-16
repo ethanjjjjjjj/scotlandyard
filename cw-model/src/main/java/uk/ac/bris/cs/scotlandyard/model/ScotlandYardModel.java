@@ -47,7 +47,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 		
 		if (graph.isEmpty()){
-			throw new IllegalArgumentException("Empty grpah");
+			throw new IllegalArgumentException("Empty graph");
 		}
 
 		if (mrX.colour != BLACK) {
@@ -60,32 +60,31 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 		configurations.add(0, firstDetective);
 		configurations.add(0, mrX);
-		this.players = configurations;
 
-		Set<Integer> set = new HashSet<>();//Checking there are not duplicate colours or locations
+		this.players = configurations;
+		
+		checkTickets(players);
+		checkLocations(players);
+	}
+	
+	//Checking there are not duplicate colours or locations
+	public void checkLocations(ArrayList<PlayerConfiguration> configs){
+		Set<Integer> setLocation = new HashSet<>();
 		Set<Colour> setColour = new HashSet<>();
-		for (PlayerConfiguration configuration : players) {
-			if (set.contains(configuration.location)){
+		for (PlayerConfiguration configuration : configs) {
+			if (setLocation.contains(configuration.location)){
 				throw new IllegalArgumentException("Duplicate location");
 			}
 			if (setColour.contains(configuration.colour)){
 				throw new IllegalArgumentException("Duplicate colour");
 			}
-		set.add(configuration.location);
+		setLocation.add(configuration.location);
 		setColour.add(configuration.colour);
 		}
-		
-
-		//checks whether the detective pr MrX has invalid tickets or missing tickets
-		checkTickets(players);
-
-		
 	}
-	
+
+	//Checks whether the detective pr MrX has invalid tickets or missing tickets
 	public void checkTickets(ArrayList<PlayerConfiguration> configs){
-
-		
-
 		for(PlayerConfiguration player:configs){
 			if(player.tickets.containsKey(DOUBLE) ||  player.tickets.containsKey(SECRET)){
 				if(player.colour.isDetective() && (player.tickets.get(DOUBLE) != 0 ||  player.tickets.get(SECRET) != 0)){
@@ -99,10 +98,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			if(player.colour.isMrX() && (!(player.tickets.containsKey(Ticket.TAXI)) || !(player.tickets.containsKey(Ticket.BUS)) || !(player.tickets.containsKey(Ticket.UNDERGROUND))|| !(player.tickets.containsKey(Ticket.DOUBLE))|| !(player.tickets.containsKey(Ticket.SECRET)))){
 				throw new IllegalArgumentException("Mr X Missing tickets");
 			}
-		}
-		
+		}	
 	}
-
 
 
 	@Override
