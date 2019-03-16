@@ -218,7 +218,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetRoundsIsImmutable() {
+	public void testGetRoundsIsImmutable() { //COMPLETED
 		ScotlandYardGame game = createGame(
 				new ArrayList<>(asList(true, false)),
 				defaultGraph(),
