@@ -24,3 +24,11 @@ hs_err_pid*
 /scotlandyard/nbproject/private/
 \.directory
 cw-model/.mvn/wrapper/maven-wrapper.jar
+
+*.json
+
+cw-model/\.classpath
+
+cw-model/\.project
+
+*.prefs
