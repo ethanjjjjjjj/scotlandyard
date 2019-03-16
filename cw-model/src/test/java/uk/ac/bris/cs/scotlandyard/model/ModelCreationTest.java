@@ -250,7 +250,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetPlayersMatchesSupplied() {
+	public void testGetPlayersMatchesSupplied() {//COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(true, false, true, false),
 				defaultGraph(),
@@ -262,7 +262,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetPlayersIsImmutable() {
+	public void testGetPlayersIsImmutable() {//COMPLETED
 		assertThatThrownBy(() -> createValidSixPlayerGame().getPlayers().add(RED))
 				.isInstanceOf(UnsupportedOperationException.class);
 	}

@@ -61,6 +61,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		configurations.add(0, firstDetective);
 		configurations.add(0, mrX);
 		this.players = configurations;
+
 		Set<Integer> set = new HashSet<>();//Checking there are not duplicate colours or locations
 		Set<Colour> setColour = new HashSet<>();
 		for (PlayerConfiguration configuration : players) {
@@ -76,7 +77,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 
 		//checks whether the detective pr MrX has invalid tickets or missing tickets
-		checkTickets(configurations);
+		checkTickets(players);
 
 		
 	}
@@ -131,9 +132,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public List<Colour> getPlayers() {
 		ArrayList<Colour> playerColours= new ArrayList<>();
-		playerColours.add(this.firstDetective.colour);
-		playerColours.add(this.mrX.colour);
-		for (PlayerConfiguration p : this.restOfTheDetectives){
+		for (PlayerConfiguration p : this.players){
 			playerColours.add(p.colour);
 		}
 		return Collections.unmodifiableList(playerColours);
