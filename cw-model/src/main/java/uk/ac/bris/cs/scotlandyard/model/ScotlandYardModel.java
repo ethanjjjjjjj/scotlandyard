@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import uk.ac.bris.cs.gamekit.graph.Edge;
 import uk.ac.bris.cs.gamekit.graph.Graph;
@@ -30,7 +31,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	Graph<Integer, Transport> graph;
 	PlayerConfiguration mrX;
 	PlayerConfiguration firstDetective;
-	PlayerConfiguration restOfTheDetectives;
+	ArrayList<PlayerConfiguration> restOfTheDetectives;
+	ArrayList<PlayerConfiguration> players;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
@@ -38,6 +40,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
+		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
+
 		if (rounds.isEmpty()) {
 			throw new IllegalArgumentException("Empty rounds");
 		}
@@ -56,10 +60,10 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 		configurations.add(0, firstDetective);
 		configurations.add(0, mrX);
-
+		this.players = configurations;
 		Set<Integer> set = new HashSet<>();//Checking there are not duplicate colours or locations
 		Set<Colour> setColour = new HashSet<>();
-		for (PlayerConfiguration configuration : configurations) {
+		for (PlayerConfiguration configuration : players) {
 			if (set.contains(configuration.location)){
 				throw new IllegalArgumentException("Duplicate location");
 			}
@@ -126,8 +130,13 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public List<Colour> getPlayers() {
-		// TODO
-		throw new RuntimeException("Implement me");
+		ArrayList<Colour> playerColours= new ArrayList<>();
+		playerColours.add(this.firstDetective.colour);
+		playerColours.add(this.mrX.colour);
+		for (PlayerConfiguration p : this.restOfTheDetectives){
+			playerColours.add(p.colour);
+		}
+		return Collections.unmodifiableList(playerColours);
 	}
 
 	@Override
