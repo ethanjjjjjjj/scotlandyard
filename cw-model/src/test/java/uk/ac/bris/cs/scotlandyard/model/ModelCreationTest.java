@@ -295,7 +295,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetPlayersStartsWithBlack() {
+	public void testGetPlayersStartsWithBlack() { //COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(true, false, true, false),
 				defaultGraph(),
