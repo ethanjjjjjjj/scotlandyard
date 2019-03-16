@@ -67,8 +67,25 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			}
 		set.add(configuration.location);
 		setColour.add(configuration.colour);
-		}	
+		}
+		
+
+		//checks whether the detective has invalid tickets
+		checkTickets(configurations);
+
+		
 	}
+	
+	public void checkTickets(ArrayList<PlayerConfiguration> configs){
+		for(PlayerConfiguration player:configs){
+			if(player.colour.isDetective() && (player.tickets.get(DOUBLE)!=0 || player.tickets.get(SECRET)!=0 )){
+				throw new IllegalArgumentException("Detective has invalid tickets");
+				
+			}
+		}
+	}
+
+
 
 	@Override
 	public void registerSpectator(Spectator spectator) {

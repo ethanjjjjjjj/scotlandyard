@@ -115,7 +115,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testDetectiveHaveSecretTicketShouldThrow() {
+	public void testDetectiveHaveSecretTicketShouldThrow() {//COMPLETED
 		PlayerConfiguration blue = new Builder(BLUE).using(dummyPlayer())
 				.with(makeTickets(1, 1, 1, 0, 1))
 				.at(2).build();
@@ -124,7 +124,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testDetectiveHaveDoubleTicketShouldThrow() {
+	public void testDetectiveHaveDoubleTicketShouldThrow() {//COMPLETED
 		PlayerConfiguration blue = new Builder(BLUE).using(dummyPlayer())
 				.with(makeTickets(1, 1, 0, 1, 0))
 				.at(2).build();
