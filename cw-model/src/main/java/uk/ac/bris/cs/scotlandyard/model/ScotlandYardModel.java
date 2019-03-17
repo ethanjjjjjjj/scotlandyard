@@ -33,6 +33,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	PlayerConfiguration firstDetective;
 	ArrayList<PlayerConfiguration> restOfTheDetectives;
 	ArrayList<PlayerConfiguration> players;
+	ArrayList<ScotlandYardPlayer> mutablePlayers;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
@@ -66,6 +67,10 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 		checkTickets(players);
 		checkLocations(players);
+
+		for (PlayerConfiguration p : players){
+			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
+		}
 	}
 	
 	//Checking there are not duplicate colours or locations
@@ -144,8 +149,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Optional<Integer> getPlayerLocation(Colour colour) {
-		// TODO
-		throw new RuntimeException("Implement me");
+		for (ScotlandYardPlayer p : this.mutablePlayers){
+			if (p.colour() == colour){
+				return Optional.of(p.location());
+			}
+		}
+		return Optional.empty();
 	}
 
 	@Override
