@@ -81,7 +81,7 @@ public class ScotlandYardPlayer {
 	 * @return the player's current tickets.
 	 */
 	public Map<Ticket, Integer> tickets() {
-		return tickets;
+		return tickets; 
 	}
 
 	/**
