@@ -41,7 +41,9 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
-
+		this.mutablePlayers=new ArrayList<>();
+		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
+		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
 		if (rounds.isEmpty()) {
 			throw new IllegalArgumentException("Empty rounds");
 		}
@@ -56,21 +58,26 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 		//MrX, the first detective, and the rest of the detectives are added to one arraylist so it
 		//it easier to iterate over all of them at once.
-		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
-		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
+		
+		
 		for (PlayerConfiguration configuration : restOfTheDetectives){
 			configurations.add(requireNonNull(configuration));
 		}
 		configurations.add(0, firstDetective);
 		configurations.add(0, mrX);
 		this.players = configurations;
+		for (PlayerConfiguration p : players){
+			System.out.println(p);
+			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
+		}
+
+
 		
 		checkTickets(players);
 		checkLocations(players);
-
-		for (PlayerConfiguration p : players){
-			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
-		}
+		
+		
+		
 	}
 	
 	//Checking there are not duplicate colours or locations

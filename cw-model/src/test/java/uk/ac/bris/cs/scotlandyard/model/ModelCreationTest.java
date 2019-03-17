@@ -307,7 +307,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetDetectiveLocationMatchesSupplied() {
+	public void testGetDetectiveLocationMatchesSupplied() {//COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(false, false, false),
 				defaultGraph(),
