@@ -67,6 +67,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 		checkTickets(players);
 		checkLocations(players);
+		
 
 		for (PlayerConfiguration p : players){
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
