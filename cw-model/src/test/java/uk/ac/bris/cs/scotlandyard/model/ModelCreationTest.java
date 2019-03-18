@@ -268,17 +268,17 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGameIsNotOverInitially() {
+	public void testGameIsNotOverInitially() { //COMPLETED
 		assertThat(createValidSixPlayerGame().isGameOver()).isFalse();
 	}
 
 	@Test
-	public void testWinningPlayerIsEmptyInitially() {
+	public void testWinningPlayerIsEmptyInitially() { //COMPLETED
 		assertThat(createValidSixPlayerGame().getWinningPlayers()).isEmpty();
 	}
 
 	@Test
-	public void testWinningPlayerIsImmutable() {
+	public void testWinningPlayerIsImmutable() { //COMPLETED
 		assertThatThrownBy(() -> createValidSixPlayerGame().getWinningPlayers().add(BLACK))
 				.isInstanceOf(UnsupportedOperationException.class);
 	}
