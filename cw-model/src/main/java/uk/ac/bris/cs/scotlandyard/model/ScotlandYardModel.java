@@ -179,8 +179,16 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public boolean isGameOver() {
-		// TODO
-		throw new RuntimeException("Implement me");
+		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
+		
+		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
+			if(p.location()==mrX.location())return true;
+			else{
+				kill(me);
+			}
+			}
+		
+
 	}
 
 	@Override
