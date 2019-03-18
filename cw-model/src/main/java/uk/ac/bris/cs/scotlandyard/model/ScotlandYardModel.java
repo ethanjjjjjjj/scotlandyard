@@ -183,9 +183,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
 			if(p.location()==mrX.location())return true;
-			else{
-				kill(me);
-			}
+			return false;
 			}
 		
 
