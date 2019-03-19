@@ -164,11 +164,21 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		is returned. Need to consider case that MrX wins.
 		Maybe put code from isGameOver and this into one function as they both use the same code.
 		*/
+	
+
+		ArrayList<Colour> mrXWin= new ArrayList<>();
+		mrXWin.add(this.mutablePlayers.get(0).colour());
+
+		ArrayList<Colour> detectiveWin= new ArrayList<>();
+		detectiveWin.add(this.firstDetective.colour);
+		for(PlayerConfiguration p:this.restOfTheDetectives){
+			detectiveWin.add(p.colour);
+		}
+
 		
 		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
-		
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-			if(p.location()==mrX.location())return true;
+			if(p.location()==mrX.location())return Set.copyOf(detectiveWin);
 		}
 
 
@@ -189,11 +199,14 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			if(nodeValues.contains(p.location())){samevalues++;};
 		}
 		if(samevalues==this.mutablePlayers.size()){
-			return true;
+			return Set.copyOf(detectiveWin);
 		}
 
 
-		return false;
+
+		
+
+		return Set.of();
 
 
 
