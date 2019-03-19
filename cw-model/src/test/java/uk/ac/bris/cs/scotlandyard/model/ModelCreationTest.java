@@ -351,7 +351,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetPlayerTicketsMatchesSupplied() {
+	public void testGetPlayerTicketsMatchesSupplied() { //COMPLETED
 		PlayerConfiguration mrX = new Builder(BLACK).using(dummyPlayer())
 				.with(makeTickets(1, 2, 3, 4, 5)).at(1).build();
 
