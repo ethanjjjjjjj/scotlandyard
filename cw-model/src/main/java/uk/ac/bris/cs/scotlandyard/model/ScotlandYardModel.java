@@ -142,7 +142,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		Move pass = new PassMove(MrX.colour());
 		moves.add(pass); 
 		
-		MrX.makeMove(super,MrX.location(),moves,pass);
+		MrX.makeMove(this,MrX.location(),moves,pass);
 	}
 
 	@Override
