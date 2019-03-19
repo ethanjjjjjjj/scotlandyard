@@ -2,6 +2,8 @@ package uk.ac.bris.cs.scotlandyard.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A class that contains all the information about a particular player.
@@ -145,6 +147,6 @@ public class ScotlandYardPlayer implements Player {
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback){
-		
+
 	}
 }
