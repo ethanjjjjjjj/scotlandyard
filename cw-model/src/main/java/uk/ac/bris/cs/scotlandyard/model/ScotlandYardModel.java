@@ -165,7 +165,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		Maybe put code from isGameOver and this into one function as they both use the same code.
 		*/
 	
-
+		
 		ArrayList<Colour> mrXWin= new ArrayList<>();
 		mrXWin.add(this.mutablePlayers.get(0).colour());
 
@@ -175,6 +175,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			detectiveWin.add(p.colour);
 		}
 
+		//checks whether any of the detectives are in teh same location as mrX 
 		
 		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
@@ -195,19 +196,37 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 
 		int samevalues=0;
-		for(ScotlandYardPlayer p : this.mutablePlayers){
+		for(ScotlandYardPlayer p : this.mutablePlayers.subList(1, this.mutablePlayers.size())){
 			if(nodeValues.contains(p.location())){samevalues++;};
 		}
 		if(samevalues==this.mutablePlayers.size()){
 			return Set.copyOf(detectiveWin);
 		}
-
-
-
+		
+		
+		
+		//checks whether the round limit has been reached
+		if(this.roundNumber==22){
+			return Set.copyOf(mrXWin);
+		}
 		
 
-		return Set.of();
 
+		//checks whether all of the detectives have no possible moves left
+
+		for(ScotlandYardPlayer p: this.mutablePlayers.subList(1, this.mutablePlayers.size())){
+			edgesFrom=this.graph.getEdgesFrom(this.graph.getNode(p.location()));
+			for(Edge<Integer,Transport> e:edgesFrom){
+				if(p.tickets().containsKey(Ticket.fromTransport(e.data()))){
+					if(p.tickets().get(Ticket.fromTransport(e.data()))>0){
+						return Set.of();
+					}
+				}
+			}
+		}
+
+		
+		return Set.copyOf(mrXWin);
 
 
 
@@ -232,8 +251,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	}
 
 	@Override
-	public boolean isGameOver() {//only checks for one case currently - location of detective on mrX
-		
+	public boolean isGameOver() {
+		return false;
 	}
 
 	@Override
