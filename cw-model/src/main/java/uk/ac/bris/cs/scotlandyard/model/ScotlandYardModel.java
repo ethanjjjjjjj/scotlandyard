@@ -164,39 +164,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		is returned. Need to consider case that MrX wins.
 		Maybe put code from isGameOver and this into one function as they both use the same code.
 		*/
-		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
-		Set<Colour> winningPlayers = new HashSet<>();
 		
-		boolean detectives = false;
-		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-			if(p.location()==mrX.location())detectives = true;
-		}
-		if (detectives){
-			for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-				winningPlayers.add(p.colour());
-			}
-		}
-		return unmodifiableSet(winningPlayers);
-	}
-
-	@Override
-	public Optional<Integer> getPlayerLocation(Colour colour) {
-		for (ScotlandYardPlayer p : this.mutablePlayers){
-			if (p.colour() == colour){
-				return Optional.of(p.location());
-			}
-		}
-		return Optional.empty();
-	}
-
-	@Override
-	public Optional<Integer> getPlayerTickets(Colour colour, Ticket ticket) {
-		// TODO
-		throw new RuntimeException("Implement me");
-	}
-
-	@Override
-	public boolean isGameOver() {//only checks for one case currently - location of detective on mrX
 		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
 		
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
@@ -225,15 +193,34 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 
 
-
-
-
-
-
-
-
 		return false;
 
+
+
+
+
+
+	}
+
+	@Override
+	public Optional<Integer> getPlayerLocation(Colour colour) {
+		for (ScotlandYardPlayer p : this.mutablePlayers){
+			if (p.colour() == colour){
+				return Optional.of(p.location());
+			}
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Integer> getPlayerTickets(Colour colour, Ticket ticket) {
+		// TODO
+		throw new RuntimeException("Implement me");
+	}
+
+	@Override
+	public boolean isGameOver() {//only checks for one case currently - location of detective on mrX
+		
 	}
 
 	@Override
