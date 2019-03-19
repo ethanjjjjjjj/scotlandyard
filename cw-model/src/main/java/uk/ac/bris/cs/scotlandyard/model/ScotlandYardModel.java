@@ -23,6 +23,7 @@ import uk.ac.bris.cs.gamekit.graph.Edge;
 import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
 import uk.ac.bris.cs.scotlandyard.model.Ticket;
+import uk.ac.bris.cs.gamekit.graph.Node;
 
 
 // TODO implement all methods and pass all tests
@@ -200,6 +201,36 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
 			if(p.location()==mrX.location())return true;
 		}
+
+
+		//checks whether all of mr x's possible moves have a detective on the node
+		Node<Integer> location = this.graph.getNode(mrX.location());
+		Collection<Edge<Integer, Transport>> edgesFrom = this.graph.getEdgesFrom(location);
+		ArrayList<Node<Integer>> nodesToCheck=new ArrayList<>();
+		for(Edge<Integer, Transport> e:edgesFrom){
+			nodesToCheck.add(e.destination());
+		}
+		ArrayList<Integer> nodeValues=new ArrayList<>();
+		for(Node<Integer> n:nodesToCheck){
+			nodeValues.add(n.value());
+		}
+
+		int samevalues=0;
+		for(ScotlandYardPlayer p : this.mutablePlayers){
+			if(nodeValues.contains(p.location())){samevalues++;};
+		}
+		if(samevalues==this.mutablePlayers.size()){
+			return true;
+		}
+
+
+
+
+
+
+
+
+
 		return false;
 
 	}
