@@ -137,8 +137,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public void startRotate() {
-		// TODO
-		throw new RuntimeException("Implement me");
+		Set<Move> moves = new HashSet<>();
+		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
+		Move pass = new PassMove(MrX.colour());
+		moves.add(pass); 
+		
+		MrX.makeMove(super,MrX.location(),moves,pass);
 	}
 
 	@Override

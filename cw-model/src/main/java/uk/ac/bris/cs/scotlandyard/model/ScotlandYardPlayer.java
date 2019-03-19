@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * A class that contains all the information about a particular player.
  */
-public class ScotlandYardPlayer {
+public class ScotlandYardPlayer implements Player {
 
 	private final Player player;
 	private final Colour colour;
@@ -141,5 +141,10 @@ public class ScotlandYardPlayer {
 		sb.append(", tickets=").append(tickets);
 		sb.append('}');
 		return sb.toString();
+	}
+
+	@Override
+	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback){
+		
 	}
 }
