@@ -76,7 +76,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 
 		for (PlayerConfiguration p : players){
-			System.out.println(p);
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
 
