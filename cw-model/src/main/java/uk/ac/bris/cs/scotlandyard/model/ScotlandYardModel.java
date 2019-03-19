@@ -252,7 +252,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public boolean isGameOver() {
-		return false;
+		if(this.getWinningPlayers().isEmpty()){return false;}
+		else{return true;}
 	}
 
 	@Override
