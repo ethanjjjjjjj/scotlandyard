@@ -284,7 +284,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 	}
 
 	@Test
-	public void testGetRoundIsNOT_STARTEDInitially() {
+	public void testGetRoundIsNOT_STARTEDInitially() {//COMPLETED
 		assertThat(createValidSixPlayerGame().getCurrentRound()).isEqualTo(ScotlandYardGame
 				.NOT_STARTED);
 	}
