@@ -87,7 +87,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		checkLocations(players);
 		
 		
-		
+		this.currentPlayer=mutablePlayers.get(0);
 	}
 	
 	//Checking there are not duplicate colours or locations
