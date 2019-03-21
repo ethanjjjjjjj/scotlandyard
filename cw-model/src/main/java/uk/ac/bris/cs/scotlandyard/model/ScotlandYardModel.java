@@ -36,7 +36,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	ArrayList<PlayerConfiguration> players;
 	ArrayList<ScotlandYardPlayer> mutablePlayers;
 	int roundNumber = 0;
-	ScotlandYardPlayer currentPlayer;
+
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
@@ -141,7 +141,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
-
 		//moves.add(pass); 
 		
 		//MrX.makeMove(this,MrX.location(),moves,pass);
@@ -149,7 +148,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		while(!this.isGameOver()){
 
 			for(ScotlandYardPlayer p:mutablePlayers){
-				this.currentPlayer=p;
+
 				moves=new HashSet<>();
 				moves.add(pass);
 
@@ -164,6 +163,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			}
 			this.roundNumber++;
 		}
+
 
 
 
@@ -263,9 +263,16 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Optional<Integer> getPlayerLocation(Colour colour) {
-		for (ScotlandYardPlayer p : this.mutablePlayers){
-			if (p.colour() == colour){
-				return Optional.of(p.location());
+		if (colour != BLACK){
+			for (ScotlandYardPlayer p : this.mutablePlayers){
+				if (p.colour() == colour ){
+					return Optional.of(p.location());
+				}
+			}
+		}
+		else{
+			if (!this.rounds.get(getCurrentRound())){
+				return Optional.of(0);
 			}
 		}
 		return Optional.empty();
@@ -289,7 +296,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Colour getCurrentPlayer() {
-		return this.currentPlayer.colour();
+		// TODO
+		throw new RuntimeException("Implement me");
 	}
 
 	@Override
