@@ -136,7 +136,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	}
 
 	@Override
-	public void startRotate() {
+	public void startRotate() {//unfinished
 		Set<Move> moves = new HashSet<>();
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
