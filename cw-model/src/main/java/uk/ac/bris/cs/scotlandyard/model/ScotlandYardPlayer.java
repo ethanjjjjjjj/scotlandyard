@@ -147,6 +147,6 @@ public class ScotlandYardPlayer implements Player {
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback){
-
+		
 	}
 }
