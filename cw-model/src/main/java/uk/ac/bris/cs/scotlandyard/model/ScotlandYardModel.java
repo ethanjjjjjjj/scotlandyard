@@ -36,6 +36,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	ArrayList<PlayerConfiguration> players;
 	ArrayList<ScotlandYardPlayer> mutablePlayers;
 	int roundNumber = 0;
+	ScotlandYardPlayer currentPlayer;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
@@ -148,7 +149,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		while(!this.isGameOver()){
 
 			for(ScotlandYardPlayer p:mutablePlayers){
-
+				this.currentPlayer=p;
 				moves=new HashSet<>();
 				moves.add(pass);
 
@@ -296,8 +297,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Colour getCurrentPlayer() {
-		// TODO
-		throw new RuntimeException("Implement me");
+		return this.currentPlayer.colour();
 	}
 
 	@Override
