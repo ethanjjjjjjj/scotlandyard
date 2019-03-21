@@ -137,12 +137,34 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public void startRotate() {//unfinished
-		Set<Move> moves = new HashSet<>();
+		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
-		moves.add(pass); 
+		//moves.add(pass); 
 		
-		MrX.makeMove(this,MrX.location(),moves,pass);
+		//MrX.makeMove(this,MrX.location(),moves,pass);
+
+		while(!this.isGameOver()){
+
+			for(ScotlandYardPlayer p:mutablePlayers){
+
+				moves=new HashSet<>();
+				moves.add(pass);
+
+
+				for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+					if(p.hasTickets(Ticket.fromTransport(e.data()))){
+					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
+					}
+				}
+
+
+			}
+			this.roundNumber++;
+		}
+
+
+
 	}
 
 	@Override
