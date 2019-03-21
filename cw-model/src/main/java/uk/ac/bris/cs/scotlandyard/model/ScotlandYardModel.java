@@ -144,7 +144,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		//moves.add(pass); 
 		
 		//MrX.makeMove(this,MrX.location(),moves,pass);
-<<<<<<< HEAD
 
 		while(!this.isGameOver()){
 
