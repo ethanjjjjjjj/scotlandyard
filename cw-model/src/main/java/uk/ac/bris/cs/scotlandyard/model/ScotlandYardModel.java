@@ -43,6 +43,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
+		this.firstDetective = requireNonNull(firstDetective);
 		this.mutablePlayers=new ArrayList<>();
 		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
 		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
