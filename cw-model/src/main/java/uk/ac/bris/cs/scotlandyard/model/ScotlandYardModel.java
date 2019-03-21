@@ -167,8 +167,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 
 
-=======
->>>>>>> master
+
 	}
 
 	@Override
