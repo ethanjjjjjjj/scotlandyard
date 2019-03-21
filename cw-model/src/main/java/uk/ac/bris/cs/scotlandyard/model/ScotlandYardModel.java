@@ -240,9 +240,16 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Optional<Integer> getPlayerLocation(Colour colour) {
-		for (ScotlandYardPlayer p : this.mutablePlayers){
-			if (p.colour() == colour){
-				return Optional.of(p.location());
+		if (colour != BLACK){
+			for (ScotlandYardPlayer p : this.mutablePlayers){
+				if (p.colour() == colour ){
+					return Optional.of(p.location());
+				}
+			}
+		}
+		else{
+			if (!this.rounds.get(getCurrentRound())){
+				return Optional.of(0);
 			}
 		}
 		return Optional.empty();

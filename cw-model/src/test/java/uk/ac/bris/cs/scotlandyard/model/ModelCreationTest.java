@@ -326,7 +326,7 @@ public class  ModelCreationTest extends ParameterisedModelTestBase {
 
 
 	@Test
-	public void testGetPlayerLocationConcealsMrXLocationInitially() {
+	public void testGetPlayerLocationConcealsMrXLocationInitially() { //COMPLETED
 		ScotlandYardGame game = createGame(
 				asList(false, false, false),
 				defaultGraph(),
