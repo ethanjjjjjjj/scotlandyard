@@ -43,6 +43,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
+		this.firstDetective = requireNonNull(firstDetective);
 		this.mutablePlayers=new ArrayList<>();
 		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
 		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
@@ -143,6 +144,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		//moves.add(pass); 
 		
 		//MrX.makeMove(this,MrX.location(),moves,pass);
+<<<<<<< HEAD
 
 		while(!this.isGameOver()){
 
@@ -165,6 +167,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 
 
+=======
+>>>>>>> master
 	}
 
 	@Override
