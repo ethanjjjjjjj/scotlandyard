@@ -137,7 +137,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public void startRotate() {//unfinished
 
-		Consumer<Move>  callback= (x) -> ;
+		Consumer<Move>  callback= (x) -> System.out.println(x);
 		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
@@ -157,7 +157,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				}
 
 
-				p.makeMove(this,p.location(),moves,);
+				p.makeMove(this,p.location(),moves,callback);
 
 
 			}
