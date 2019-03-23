@@ -68,17 +68,17 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			configurations.add(requireNonNull(configuration));
 		}
 		configurations.add(0, firstDetective);
+		configurations.add(0, mrX);
+		this.players = configurations;
+
+
+
 
 		//MrX is given it's own mutable class called ScotlandYardMrX. The detectives use ScotlandYardPlayer
 		this.mutablePlayers.add(new ScotlandYardMrX(mrX.player, mrX.colour, mrX.location, mrX.tickets));
 		for (PlayerConfiguration p : configurations){
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
-		
-
-		configurations.add(0, mrX);
-		this.players = configurations;
-		
 
 		checkTickets(players);
 		checkLocations(players);
@@ -136,14 +136,13 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public void startRotate() {//unfinished
+
+		Consumer<Move>  callback= (x) -> ;
 		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
-		//moves.add(pass); 
+	
 		
-		//MrX.makeMove(this,MrX.location(),moves,pass);
-
-		while(!this.isGameOver()){
 
 			for(ScotlandYardPlayer p:mutablePlayers){
 				this.currentPlayer=p;
@@ -158,9 +157,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				}
 
 
+				p.makeMove(this,p.location(),moves,);
+
+
 			}
 			this.roundNumber++;
-		}
+		
 
 
 
