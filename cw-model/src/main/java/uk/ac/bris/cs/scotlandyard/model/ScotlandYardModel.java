@@ -138,6 +138,22 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	public void startRotate() {//unfinished
 
 		//Consumer<Move>  callback= (x) -> ;
+		MoveVisitor v = new MoveVisitor(){
+			public void visit(PassMove move){
+
+			}
+
+			public void visit(TicketMove move){
+
+			}
+
+			public void visit(DoubleMove move){
+				
+			}
+		};
+		Consumer<Move> c = (x) -> {
+
+		};
 		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
