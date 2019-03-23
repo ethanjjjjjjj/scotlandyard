@@ -76,7 +76,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 		//MrX is given it's own mutable class called ScotlandYardMrX. The detectives use ScotlandYardPlayer
 		this.mutablePlayers.add(new ScotlandYardMrX(mrX.player, mrX.colour, mrX.location, mrX.tickets));
-		for (PlayerConfiguration p : configurations){
+		for (PlayerConfiguration p : configurations.subList(1,configurations.size())){
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
 
@@ -137,7 +137,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public void startRotate() {//unfinished
 
-		Consumer<Move>  callback= (x) -> ;
+		//Consumer<Move>  callback= (x) -> ;
 		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass = new PassMove(MrX.colour());
@@ -157,7 +157,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				}
 
 
-				p.makeMove(this,p.location(),moves,);
+				//p.makeMove(this,p.location(),moves,);
 
 
 			}
@@ -186,14 +186,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Set<Colour> getWinningPlayers() {
-		/*Currently will just check if anyof the detecives is in the same space as MrX
-		if so, then all of the colours of the detectives are returned. If not, the empty set
-		is returned. Need to consider case that MrX wins.
-		Maybe put code from isGameOver and this into one function as they both use the same code.
-		*/
-	
-		
 		ArrayList<Colour> mrXWin= new ArrayList<>();
+
 		mrXWin.add(this.mutablePlayers.get(0).colour());
 
 		ArrayList<Colour> detectiveWin= new ArrayList<>();
@@ -202,11 +196,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			detectiveWin.add(p.colour);
 		}
 
-		//checks whether any of the detectives are in teh same location as mrX 
-		
+		//checks whether any of the detectives are in the same location as mrX 
 		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-			if(p.location()==mrX.location())return Set.copyOf(detectiveWin);
+			if(p.location()==mrX.location()){
+				return Set.copyOf(detectiveWin);
+			}
 		}
 
 
@@ -238,9 +233,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 		
 
-
 		//checks whether all of the detectives have no possible moves left
-
 		for(ScotlandYardPlayer p: this.mutablePlayers.subList(1, this.mutablePlayers.size())){
 			edgesFrom=this.graph.getEdgesFrom(this.graph.getNode(p.location()));
 			for(Edge<Integer,Transport> e:edgesFrom){
@@ -252,12 +245,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			}
 		}
 
-		
 		return Set.copyOf(mrXWin);
-
-
-
-
 
 	}
 
