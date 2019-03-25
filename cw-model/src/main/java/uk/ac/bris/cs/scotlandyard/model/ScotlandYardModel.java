@@ -33,7 +33,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	PlayerConfiguration mrX;
 	PlayerConfiguration firstDetective;
 	ArrayList<PlayerConfiguration> restOfTheDetectives;
-	ArrayList<PlayerConfiguration> players;
 	ArrayList<ScotlandYardPlayer> mutablePlayers;
 	int roundNumber = 0;
 	ScotlandYardPlayer currentPlayer;
@@ -41,6 +40,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
+
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
@@ -48,6 +48,32 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.mutablePlayers=new ArrayList<>();
 		this.restOfTheDetectives= new ArrayList<>(Arrays.asList(restOfTheDetectives));
 		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
+
+		checkForEmpty(this.rounds, this.graph, this.mrX);
+
+		//MrX, the first detective, and the rest of the detectives are added to one arraylist so it
+		//it easier to iterate over all of them at once.
+		for (PlayerConfiguration configuration : restOfTheDetectives){
+			configurations.add(requireNonNull(configuration));
+		}
+		configurations.add(0, firstDetective);
+		configurations.add(0, mrX);
+
+		//MrX is given it's own mutable class called ScotlandYardMrX. The detectives use ScotlandYardPlayer
+		this.mutablePlayers.add(new ScotlandYardMrX(mrX.player, mrX.colour, mrX.location, mrX.tickets));
+		for (PlayerConfiguration p : configurations.subList(1,configurations.size())){
+			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
+		}
+
+		checkTickets(configurations);
+		checkLocations(configurations);
+		
+		this.currentPlayer=mutablePlayers.get(0);
+	}
+
+	//Checking attribues are not empty
+	public void checkForEmpty(List<Boolean> rounds, Graph<Integer, Transport> graph, 
+	PlayerConfiguration mrX){
 		if (rounds.isEmpty()) {
 			throw new IllegalArgumentException("Empty rounds");
 		}
@@ -59,32 +85,6 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		if (mrX.colour != BLACK) {
 			throw new IllegalArgumentException("MrX should be Black");
 		}
-
-		//MrX, the first detective, and the rest of the detectives are added to one arraylist so it
-		//it easier to iterate over all of them at once.
-		
-		
-		for (PlayerConfiguration configuration : restOfTheDetectives){
-			configurations.add(requireNonNull(configuration));
-		}
-		configurations.add(0, firstDetective);
-		configurations.add(0, mrX);
-		this.players = configurations;
-
-
-
-
-		//MrX is given it's own mutable class called ScotlandYardMrX. The detectives use ScotlandYardPlayer
-		this.mutablePlayers.add(new ScotlandYardMrX(mrX.player, mrX.colour, mrX.location, mrX.tickets));
-		for (PlayerConfiguration p : configurations){
-			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
-		}
-
-		checkTickets(players);
-		checkLocations(players);
-		
-		
-		this.currentPlayer=mutablePlayers.get(0);
 	}
 	
 	//Checking there are not duplicate colours or locations
@@ -157,7 +157,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				}
 
 
-				p.makeMove(this,p.location(),moves,callback);
+				//p.makeMove(this,p.location(),moves,);
 
 
 			}
@@ -178,22 +178,16 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public List<Colour> getPlayers() {
 		ArrayList<Colour> playerColours= new ArrayList<>();
-		for (PlayerConfiguration p : this.players){
-			playerColours.add(p.colour);
+		for (ScotlandYardPlayer p : this.mutablePlayers){
+			playerColours.add(p.colour());
 		}
 		return Collections.unmodifiableList(playerColours);
 	}
 
 	@Override
 	public Set<Colour> getWinningPlayers() {
-		/*Currently will just check if anyof the detecives is in the same space as MrX
-		if so, then all of the colours of the detectives are returned. If not, the empty set
-		is returned. Need to consider case that MrX wins.
-		Maybe put code from isGameOver and this into one function as they both use the same code.
-		*/
-	
-		
 		ArrayList<Colour> mrXWin= new ArrayList<>();
+
 		mrXWin.add(this.mutablePlayers.get(0).colour());
 
 		ArrayList<Colour> detectiveWin= new ArrayList<>();
@@ -202,11 +196,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			detectiveWin.add(p.colour);
 		}
 
-		//checks whether any of the detectives are in teh same location as mrX 
-		
+		//checks whether any of the detectives are in the same location as mrX 
 		ScotlandYardPlayer mrX=this.mutablePlayers.get(0);
 		for(ScotlandYardPlayer p:this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-			if(p.location()==mrX.location())return Set.copyOf(detectiveWin);
+			if(p.location()==mrX.location()){
+				return Set.copyOf(detectiveWin);
+			}
 		}
 
 
@@ -238,9 +233,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		}
 		
 
-
 		//checks whether all of the detectives have no possible moves left
-
 		for(ScotlandYardPlayer p: this.mutablePlayers.subList(1, this.mutablePlayers.size())){
 			edgesFrom=this.graph.getEdgesFrom(this.graph.getNode(p.location()));
 			for(Edge<Integer,Transport> e:edgesFrom){
@@ -252,12 +245,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 			}
 		}
 
-		
 		return Set.copyOf(mrXWin);
-
-
-
-
 
 	}
 
