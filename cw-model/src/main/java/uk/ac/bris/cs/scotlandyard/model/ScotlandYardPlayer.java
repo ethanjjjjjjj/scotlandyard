@@ -8,13 +8,13 @@ import java.util.function.Consumer;
 /**
  * A class that contains all the information about a particular player.
  */
-public class ScotlandYardPlayer implements Player {
+public class ScotlandYardPlayer implements Consumer<Move>{
 
 	private final Player player;
 	private final Colour colour;
 	private int location;
 	private final Map<Ticket, Integer> tickets;
-
+	Consumer<Move> callback;
 	/**
 	 * Constructs a new ScotlandYardPlayer object.
 	 *
@@ -23,6 +23,8 @@ public class ScotlandYardPlayer implements Player {
 	 * @param location the location of the player.
 	 * @param tickets the tickets associated with the player.
 	 */
+
+	 
 	public ScotlandYardPlayer(Player player, Colour colour, int location,
 			Map<Ticket, Integer> tickets) {
 		this.player = player;
@@ -31,6 +33,7 @@ public class ScotlandYardPlayer implements Player {
 		this.tickets = new HashMap<>(tickets);
 	}
 
+	
 	/**
 	 * @return the Player of the player.
 	 */
@@ -146,7 +149,26 @@ public class ScotlandYardPlayer implements Player {
 	}
 
 	@Override
-	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback){
-		
+	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> thisConsumer){
+		//notify player of possible moves
+
+		//check the player chooses a valid move
+		callback.accept(m);
+		//call the callback function to actually move the player
+	}
+
+	@Override
+	public void accept(Move m) {
+		if(m instanceof TicketMove){
+
+			this.location=m.destination();
+			this.addTicket(m.ticket(),-1);
+		}
+		else if(m instanceof PassMove){
+
+		}
+		else if(m instanceof DoubleMove){
+
+		}
 	}
 }
