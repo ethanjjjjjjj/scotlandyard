@@ -155,6 +155,7 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 		for(Move item:moves){
 			moveslist.add(item);
 		}
+		System.out.println("???");
 		// notify player of possible moves
 
 
@@ -163,6 +164,7 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 
 		// call the callback function to actually move the player
 		callback.accept(moveslist.get(0));
+		System.out.println("Maybe");
 	}
 
 	@Override
@@ -173,7 +175,10 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 			int newLocation = n.destination();
 			Ticket theTicket = n.ticket();
 			this.location = newLocation;
+			System.out.println(this.tickets);
+			System.out.println("HELP");
 			this.removeTicket(theTicket);
+			System.out.println(this.tickets);
 
 			// YOUR STUFF
 			// this.location = m.destination();
@@ -181,6 +186,7 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 		}
 		// Remeber ticket has to be given to MrX
 		else if (m instanceof PassMove) {
+			System.out.println("SFSAGSDGF");
 			// Nothing happens, so maybe remove this?
 
 		} else if (m instanceof DoubleMove) {

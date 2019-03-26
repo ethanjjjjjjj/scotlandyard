@@ -153,13 +153,13 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				moves.add(pass);
 
 
-				for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+				/*for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 					if(p.hasTickets(Ticket.fromTransport(e.data()))){
 					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
 					}
-				}
+				}*/
 
-
+				System.out.println(p.colour());
 				p.makeMove(this,p.location(),moves,p);
 
 
