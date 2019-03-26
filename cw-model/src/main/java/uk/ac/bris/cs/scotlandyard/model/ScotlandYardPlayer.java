@@ -16,6 +16,7 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 	private int location;
 	private final Map<Ticket, Integer> tickets;
 	Consumer<Move> callback;
+	
 
 	/**
 	 * Constructs a new ScotlandYardPlayer object.

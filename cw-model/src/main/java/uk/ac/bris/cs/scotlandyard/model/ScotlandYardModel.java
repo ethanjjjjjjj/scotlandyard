@@ -36,11 +36,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	ArrayList<ScotlandYardPlayer> mutablePlayers;
 	int roundNumber = 0;
 	ScotlandYardPlayer currentPlayer;
+	ArrayList<Spectator> spectators;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
-
+		this.spectators=new ArrayList<>();
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
@@ -124,19 +125,22 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public void registerSpectator(Spectator spectator) {
-		// TODO
-		throw new RuntimeException("Implement me");
+		
+		
+		this.spectators.add(spectator);
 	}
 
 	@Override
 	public void unregisterSpectator(Spectator spectator) {
-		// TODO
-		throw new RuntimeException("Implement me");
+		
+		this.spectators.remove(spectator);
 	}
 
 	@Override
 	public void startRotate() {//TODO
-
+		for(Spectator s : spectators){
+			s.onRoundStarted(this,this.roundNumber);
+		}
 		
 
 
@@ -174,8 +178,8 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public Collection<Spectator> getSpectators() {
-		// TODO
-		throw new RuntimeException("Implement me");
+		
+		return this.spectators;
 	}
 
 	@Override
