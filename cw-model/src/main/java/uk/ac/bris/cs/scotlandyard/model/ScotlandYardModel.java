@@ -244,7 +244,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		
 		
 		//checks whether the round limit has been reached
-		if(this.roundNumber==22){
+		if(this.roundNumber==getRounds().size()){
 			return Set.copyOf(mrXWin);
 		}
 		
