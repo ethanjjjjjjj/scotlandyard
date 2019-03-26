@@ -8,32 +8,30 @@ import java.util.function.Consumer;
 /**
  * A class that contains all the information about a particular player.
  */
-public class ScotlandYardPlayer implements Consumer<Move>{
+public class ScotlandYardPlayer implements Consumer<Move> {
 
 	private final Player player;
 	private final Colour colour;
 	private int location;
 	private final Map<Ticket, Integer> tickets;
 	Consumer<Move> callback;
+
 	/**
 	 * Constructs a new ScotlandYardPlayer object.
 	 *
-	 * @param player the Player object associated with the player.
-	 * @param colour the colour of the player.
+	 * @param player   the Player object associated with the player.
+	 * @param colour   the colour of the player.
 	 * @param location the location of the player.
-	 * @param tickets the tickets associated with the player.
+	 * @param tickets  the tickets associated with the player.
 	 */
 
-	 
-	public ScotlandYardPlayer(Player player, Colour colour, int location,
-			Map<Ticket, Integer> tickets) {
+	public ScotlandYardPlayer(Player player, Colour colour, int location, Map<Ticket, Integer> tickets) {
 		this.player = player;
 		this.colour = colour;
 		this.location = location;
 		this.tickets = new HashMap<>(tickets);
 	}
 
-	
 	/**
 	 * @return the Player of the player.
 	 */
@@ -86,7 +84,7 @@ public class ScotlandYardPlayer implements Consumer<Move>{
 	 * @return the player's current tickets.
 	 */
 	public Map<Ticket, Integer> tickets() {
-		return tickets; 
+		return tickets;
 	}
 
 	/**
@@ -127,9 +125,9 @@ public class ScotlandYardPlayer implements Consumer<Move>{
 	/**
 	 * Checks whether the player has the given ticket and quantity
 	 *
-	 * @param ticket the ticket to check for; not null
-	 * @param quantityInclusive whether the ticket count is greater than or
-	 *        equal to given quantity
+	 * @param ticket            the ticket to check for; not null
+	 * @param quantityInclusive whether the ticket count is greater than or equal to
+	 *                          given quantity
 	 * @return true if the player has the quantity of the given ticket, false
 	 *         otherwise
 	 */
@@ -149,27 +147,49 @@ public class ScotlandYardPlayer implements Consumer<Move>{
 	}
 
 	@Override
-	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> thisConsumer){
-		//notify player of possible moves
+	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> thisConsumer) {
+		// notify player of possible moves
 
-		//check the player chooses a valid move
+		// check the player chooses a valid move
 		callback.accept(m);
-		moves
-		//call the callback function to actually move the player
+
+		// call the callback function to actually move the player
 	}
 
 	@Override
 	public void accept(Move m) {
-		if(m instanceof TicketMove){
+		if (m instanceof TicketMove) {
+			// Did some horrible typecasting to force m to be a ticket move
+			TicketMove n = (TicketMove) m;
+			int newLocation = n.destination();
+			Ticket theTicket = n.ticket();
+			this.location = newLocation;
+			this.removeTicket(theTicket);
 
-			this.location=m.destination();
-			this.addTicket(m.ticket(),-1);
+			// YOUR STUFF
+			// this.location = m.destination();
+			// this.addTicket(m.ticket(),-1);
 		}
-		else if(m instanceof PassMove){
+		// Remeber ticket has to be given to MrX
+		else if (m instanceof PassMove) {
+			// Nothing happens, so maybe remove this?
+
+		} else if (m instanceof DoubleMove) {
+			DoubleMove n = (DoubleMove) m;
+			// I'm not sure if when MrX uses a DoubleMove, he must also use two other
+			// tickets
+			Ticket ticket1 = n.firstMove().ticket();
+			Ticket ticket2 = n.secondMove().ticket();
+			int newLocation = n.finalDestination();
+			this.removeTicket(ticket1);
+			this.removeTicket(ticket2);
+			this.location = newLocation;
 
 		}
-		else if(m instanceof DoubleMove){
+	}
 
-		}
+	@Override
+	public Consumer<Move> andThen(Consumer<? super Move> after) {
+		return Consumer.super.andThen(after);
 	}
 }
