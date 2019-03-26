@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 /**
  * A class that contains all the information about a particular player.
  */
-public class ScotlandYardPlayer implements Consumer<Move> {
+public class ScotlandYardPlayer implements Player,Consumer<Move> {
 
 	private final Player player;
 	private final Colour colour;
@@ -147,15 +147,15 @@ public class ScotlandYardPlayer implements Consumer<Move> {
 	}
 
 	@Override
-	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> thisConsumer) {
+	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
 		// notify player of possible moves
 
-		
+
 		// check the player chooses a valid move
 		
 
 		// call the callback function to actually move the player
-		callback.accept(m);
+		//callback.accept(m);
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class ScotlandYardPlayer implements Consumer<Move> {
 			int newLocation = n.finalDestination();
 			this.removeTicket(ticket1);
 			this.removeTicket(ticket2);
-			this.removeTicket(DoubleMove);
+			this.removeTicket(Ticket.DOUBLE);
 			this.location = newLocation;
 
 		}
