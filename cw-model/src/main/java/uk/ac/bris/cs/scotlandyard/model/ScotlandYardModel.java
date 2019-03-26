@@ -126,21 +126,19 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public void registerSpectator(Spectator spectator) {
 		
-		
+		requireNonNull(spectator);
 		this.spectators.add(spectator);
 	}
 
 	@Override
 	public void unregisterSpectator(Spectator spectator) {
-		
+		requireNonNull(spectator);
 		this.spectators.remove(spectator);
 	}
 
 	@Override
 	public void startRotate() {//TODO
-		for(Spectator s : spectators){
-			s.onRoundStarted(this,this.roundNumber);
-		}
+		
 		
 
 
@@ -155,22 +153,30 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				this.currentPlayer=p;
 				moves=new HashSet<>();
 				moves.add(pass);
+				if(p.colour()==BLACK){
+					this.roundNumber++;
+					for(Spectator s : this.spectators){
+						s.onRoundStarted(this,this.roundNumber);
+					}
+				}
 
-
-				/*for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+				for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 					if(p.hasTickets(Ticket.fromTransport(e.data()))){
 					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
 					}
-				}*/
+				}
 
 				System.out.println(p.colour());
 				p.makeMove(this,p.location(),moves,p);
-
-
+				for(Spectator s : this.spectators){
+					s.onMoveMade(this,pass);
+				}
 			}
-			this.roundNumber++;
+			//this.roundNumber++;
 		
-
+			for(Spectator s : this.spectators){
+				s.onRotationComplete(this);
+			}
 
 
 
@@ -284,8 +290,17 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public boolean isGameOver() {
-		if(this.getWinningPlayers().isEmpty()){return false;}
-		else{return true;}
+		if(this.getWinningPlayers().isEmpty()){
+			
+			
+			return false;}
+		else{
+			for(Spectator s : this.spectators){
+				s.onGameOver(this,this.getWinningPlayers());
+			}
+			
+			
+			return true;}
 	}
 
 	@Override
