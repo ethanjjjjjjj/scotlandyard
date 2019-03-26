@@ -1,3 +1,4 @@
+
 package uk.ac.bris.cs.scotlandyard.model;
 
 import java.util.HashMap;
