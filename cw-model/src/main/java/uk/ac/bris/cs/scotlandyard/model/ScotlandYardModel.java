@@ -135,7 +135,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	}
 
 	@Override
-	public void startRotate() {//unfinished
+	public void startRotate() {//TODO
 
 		//Consumer<Move>  callback= (x) -> ;
 		MoveVisitor v = new MoveVisitor(){
