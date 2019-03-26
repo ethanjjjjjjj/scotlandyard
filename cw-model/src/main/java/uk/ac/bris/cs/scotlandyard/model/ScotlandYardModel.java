@@ -138,17 +138,37 @@ public class ScotlandYardModel implements ScotlandYardGame {
 
 	@Override
 	public void startRotate() {//TODO
-		
-		
+		Consumer<Move> c = (x) -> {
+			Colour current = getCurrentPlayer();
+			ScotlandYardPlayer currentPlayer = this.mutablePlayers.get(0);
+			for (ScotlandYardPlayer p :  this.mutablePlayers){
+				if (current == p.colour()){
+					currentPlayer = p;
+				}
+			}
+			final ScotlandYardPlayer finalCurrentPlayer = currentPlayer;
+			MoveVisitor v = new MoveVisitor(){
+				@Override
+				public void visit(TicketMove m){
+					finalCurrentPlayer.location(m.destination());
+					finalCurrentPlayer.removeTicket(m.ticket());
+				}
 
+				@Override
+				public void visit(DoubleMove m){
+					finalCurrentPlayer.location(m.finalDestination());
+					finalCurrentPlayer.removeTicket(m.firstMove().ticket());
+					finalCurrentPlayer.removeTicket(m.secondMove().ticket());
+					finalCurrentPlayer.removeTicket(DOUBLE);
+
+				}
+			};
+		};
 
 		Set<Move> moves;
-		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
 		Move pass;
 	
-		
-
-			for(ScotlandYardPlayer p:mutablePlayers){
+				for(ScotlandYardPlayer p:mutablePlayers){
 				pass=new PassMove(p.colour());
 				this.currentPlayer=p;
 				moves=new HashSet<>();
@@ -160,25 +180,21 @@ public class ScotlandYardModel implements ScotlandYardGame {
 					}
 				}
 
-				for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+				/*for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 					if(p.hasTickets(Ticket.fromTransport(e.data()))){
 					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
 					}
-				}
+				}*/
 
-				System.out.println(p.colour());
-				p.makeMove(this,p.location(),moves,p);
+				p.makeMove(this,p.location(),moves,requireNonNull(c));
 				for(Spectator s : this.spectators){
 					s.onMoveMade(this,pass);
 				}
 			}
-			//this.roundNumber++;
 		
 			for(Spectator s : this.spectators){
 				s.onRotationComplete(this);
 			}
-
-
 
 	}
 
