@@ -154,6 +154,7 @@ public class ScotlandYardPlayer implements Consumer<Move>{
 
 		//check the player chooses a valid move
 		callback.accept(m);
+		moves
 		//call the callback function to actually move the player
 	}
 
