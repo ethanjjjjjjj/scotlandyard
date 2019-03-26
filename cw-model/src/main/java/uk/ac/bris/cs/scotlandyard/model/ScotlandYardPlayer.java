@@ -168,14 +168,25 @@ public class ScotlandYardPlayer implements Consumer<Move>{
 			this.location = newLocation;
 			this.removeTicket(theTicket);
 
+			//YOUR STUFF 
 			//this.location = m.destination();
 			//this.addTicket(m.ticket(),-1);
 		}
 		//Remeber ticket has to be given to MrX
 		else if(m instanceof PassMove){
+			//Nothing happens, so maybe remove this? 
 
 		}
 		else if(m instanceof DoubleMove){
+			DoubleMove n = (DoubleMove)m;
+			//I'm not sure if when MrX uses a DoubleMove, he must also use two other tickets
+			Ticket ticket1 = n.firstMove().ticket();
+			Ticket ticket2 = n.secondMove().ticket();
+			int newLocation = n.finalDestination();
+			this.removeTicket(ticket1);
+			this.removeTicket(ticket2);
+			this.location = newLocation;
+
 
 		}
 	}
