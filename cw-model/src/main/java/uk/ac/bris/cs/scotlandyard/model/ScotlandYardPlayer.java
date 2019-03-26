@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.ArrayList;
 
 /**
  * A class that contains all the information about a particular player.
@@ -149,6 +150,11 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
+
+		ArrayList<Move> moveslist=new ArrayList<>();
+		for(Move item:moves){
+			moveslist.add(item);
+		}
 		// notify player of possible moves
 
 
@@ -156,7 +162,7 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 		
 
 		// call the callback function to actually move the player
-		//callback.accept(m);
+		callback.accept(moveslist.get(0));
 	}
 
 	@Override
