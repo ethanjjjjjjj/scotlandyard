@@ -150,10 +150,12 @@ public class ScotlandYardPlayer implements Consumer<Move> {
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> thisConsumer) {
 		// notify player of possible moves
 
+		
 		// check the player chooses a valid move
-		callback.accept(m);
+		
 
 		// call the callback function to actually move the player
+		callback.accept(m);
 	}
 
 	@Override
@@ -183,6 +185,7 @@ public class ScotlandYardPlayer implements Consumer<Move> {
 			int newLocation = n.finalDestination();
 			this.removeTicket(ticket1);
 			this.removeTicket(ticket2);
+			this.removeTicket(DoubleMove);
 			this.location = newLocation;
 
 		}

@@ -137,30 +137,17 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public void startRotate() {//TODO
 
-		//Consumer<Move>  callback= (x) -> ;
-		MoveVisitor v = new MoveVisitor(){
-			public void visit(PassMove move){
+		
 
-			}
 
-			public void visit(TicketMove move){
-
-			}
-
-			public void visit(DoubleMove move){
-				
-			}
-		};
-		Consumer<Move> c = (x) -> {
-
-		};
 		Set<Move> moves;
 		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
-		Move pass = new PassMove(MrX.colour());
+		Move pass;
 	
 		
 
 			for(ScotlandYardPlayer p:mutablePlayers){
+				pass=new PassMove(p.colour());
 				this.currentPlayer=p;
 				moves=new HashSet<>();
 				moves.add(pass);
@@ -173,7 +160,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 				}
 
 
-				//p.makeMove(this,p.location(),moves,);
+				p.makeMove(this,p.location(),moves,p);
 
 
 			}
