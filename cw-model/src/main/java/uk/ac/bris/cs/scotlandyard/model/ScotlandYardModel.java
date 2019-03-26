@@ -127,12 +127,18 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	public void registerSpectator(Spectator spectator) {
 		
 		requireNonNull(spectator);
+		if(this.spectators.contains(spectator)){
+			throw new IllegalArgumentException("same spectator added twice");
+		}
 		this.spectators.add(spectator);
 	}
 
 	@Override
 	public void unregisterSpectator(Spectator spectator) {
 		requireNonNull(spectator);
+		if(! this.spectators.contains(spectator)){
+			throw new IllegalArgumentException("spectator not registered");
+		}
 		this.spectators.remove(spectator);
 	}
 
@@ -185,7 +191,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public Collection<Spectator> getSpectators() {
 		
-		return this.spectators;
+		return Collections.unmodifiableList(this.spectators);
 	}
 
 	@Override
