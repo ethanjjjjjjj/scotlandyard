@@ -161,10 +161,17 @@ public class ScotlandYardPlayer implements Consumer<Move>{
 	@Override
 	public void accept(Move m) {
 		if(m instanceof TicketMove){
+			//Did some horrible typecasting to force m to be a ticket move
+			TicketMove n = (TicketMove)m;
+			int newLocation = n.destination();
+			Ticket theTicket = n.ticket();
+			this.location = newLocation;
+			this.removeTicket(theTicket);
 
-			this.location=m.destination();
-			this.addTicket(m.ticket(),-1);
+			//this.location = m.destination();
+			//this.addTicket(m.ticket(),-1);
 		}
+		//Remeber ticket has to be given to MrX
 		else if(m instanceof PassMove){
 
 		}
