@@ -6,6 +6,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
+import com.google.common.collect.ImmutableSet;
 import static java.util.Objects.requireNonNull;
 import static uk.ac.bris.cs.scotlandyard.model.Colour.BLACK;
 import static uk.ac.bris.cs.scotlandyard.model.Ticket.DOUBLE;
@@ -27,7 +28,7 @@ import uk.ac.bris.cs.gamekit.graph.Node;
 
 
 // TODO implement all methods and pass all tests
-public class ScotlandYardModel implements ScotlandYardGame {
+public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	List<Boolean> rounds;
 	Graph<Integer, Transport> graph;
 	PlayerConfiguration mrX;
@@ -136,67 +137,26 @@ public class ScotlandYardModel implements ScotlandYardGame {
 		this.spectators.remove(spectator);
 	}
 
+	private Set<Move> validMoves(ScotlandYardPlayer p){
+		Set<Move> moves = new HashSet<>();
+		for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+					if(p.hasTickets(Ticket.fromTransport(e.data()))){
+						moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
+					}
+		}
+		return moves;
+	}
+
 	@Override
 	public void startRotate() {//TODO
-		Consumer<Move> c = (x) -> {
-			System.out.println("Hell");
-			Colour current = getCurrentPlayer();
-			ScotlandYardPlayer currentPlayer = this.mutablePlayers.get(0);
-			for (ScotlandYardPlayer p :  this.mutablePlayers){
-				if (current == p.colour()){
-					currentPlayer = p;
-				}
-			}
-			final ScotlandYardPlayer finalCurrentPlayer = currentPlayer;
-			MoveVisitor v = new MoveVisitor(){
-				@Override
-				public void visit(TicketMove m){
-					finalCurrentPlayer.location(m.destination());
-					finalCurrentPlayer.removeTicket(m.ticket());
-				}
-
-				@Override
-				public void visit(DoubleMove m){
-					finalCurrentPlayer.location(m.finalDestination());
-					finalCurrentPlayer.removeTicket(m.firstMove().ticket());
-					finalCurrentPlayer.removeTicket(m.secondMove().ticket());
-					finalCurrentPlayer.removeTicket(DOUBLE);
-
-				}
-			};
-		};
-
-		Set<Move> moves;
-		Move pass;
 	
-				for(ScotlandYardPlayer p:mutablePlayers){
-				pass=new PassMove(p.colour());
-				this.currentPlayer=p;
-				moves=new HashSet<>();
-				moves.add(pass);
-				if(p.colour()==BLACK){
-					this.roundNumber++;
-					for(Spectator s : this.spectators){
-						s.onRoundStarted(this,this.roundNumber);
-					}
-				}
-
-				/*for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
-					if(p.hasTickets(Ticket.fromTransport(e.data()))){
-					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
-					}
-				}*/
-
-				System.out.println("dssf");
-				p.makeMove(this,p.location(),moves,requireNonNull(c));
-				for(Spectator s : this.spectators){
-					s.onMoveMade(this,pass);
-				}
-			}
-		
-			for(Spectator s : this.spectators){
-				s.onRotationComplete(this);
-			}
+		for(ScotlandYardPlayer p:mutablePlayers){
+			this.currentPlayer=p;	
+			Set<Move> moves = new HashSet<>();
+			moves = validMoves(p);
+			p.makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);
+			
+		}
 
 	}
 
@@ -340,6 +300,40 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	public Graph<Integer, Transport> getGraph() {
 		ImmutableGraph<Integer, Transport> iGraph = new ImmutableGraph<>(graph);
 		return iGraph;
+	}
+
+	@Override
+	public void accept(Move t) {
+		System.out.println("Hell");
+		Colour current = getCurrentPlayer();
+		ScotlandYardPlayer currentPlayer = this.mutablePlayers.get(0);
+		for (ScotlandYardPlayer p :  this.mutablePlayers){
+			if (current == p.colour()){
+				currentPlayer = p;
+			}
+		}
+		final ScotlandYardPlayer finalCurrentPlayer = currentPlayer;
+		System.out.println(finalCurrentPlayer.colour());
+		t.visit(new MoveVisitor(){
+			@Override
+			public void visit(TicketMove m){
+				finalCurrentPlayer.location(m.destination());
+				finalCurrentPlayer.removeTicket(m.ticket());
+			}
+
+			@Override
+			public void visit(DoubleMove m){
+				finalCurrentPlayer.location(m.finalDestination());
+				finalCurrentPlayer.removeTicket(m.firstMove().ticket());
+				finalCurrentPlayer.removeTicket(m.secondMove().ticket());
+				finalCurrentPlayer.removeTicket(DOUBLE);
+
+			}
+			@Override
+			public void visit(PassMove m){
+				System.out.println("DSFAFGFDA");
+			}
+		});
 	}
 }
 

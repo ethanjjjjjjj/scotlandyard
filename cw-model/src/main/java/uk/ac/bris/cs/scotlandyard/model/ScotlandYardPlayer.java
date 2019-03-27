@@ -151,7 +151,7 @@ public class ScotlandYardPlayer implements Player {
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
-		callback.accept(new PassMove(this.colour));
+		callback.accept(new PassMove(this.colour()));
 
 	}
 	
