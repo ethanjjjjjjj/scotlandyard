@@ -139,6 +139,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	@Override
 	public void startRotate() {//TODO
 		Consumer<Move> c = (x) -> {
+			System.out.println("Hell");
 			Colour current = getCurrentPlayer();
 			ScotlandYardPlayer currentPlayer = this.mutablePlayers.get(0);
 			for (ScotlandYardPlayer p :  this.mutablePlayers){
@@ -186,6 +187,7 @@ public class ScotlandYardModel implements ScotlandYardGame {
 					}
 				}*/
 
+				System.out.println("dssf");
 				p.makeMove(this,p.location(),moves,requireNonNull(c));
 				for(Spectator s : this.spectators){
 					s.onMoveMade(this,pass);

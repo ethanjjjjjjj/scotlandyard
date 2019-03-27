@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.ArrayList;
+import uk.ac.bris.cs.scotlandyard.model.PassMove;
 
 /**
  * A class that contains all the information about a particular player.
@@ -150,6 +151,7 @@ public class ScotlandYardPlayer implements Player {
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
+		callback.accept(new PassMove(this.colour));
 
 	}
 	
