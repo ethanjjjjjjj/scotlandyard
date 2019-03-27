@@ -4,9 +4,11 @@ package uk.ac.bris.cs.scotlandyard.model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import uk.ac.bris.cs.scotlandyard.model.PassMove;
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * A class that contains all the information about a particular player.
@@ -151,8 +153,10 @@ public class ScotlandYardPlayer implements Player {
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
-		callback.accept(new PassMove(this.colour()));
-
+		requireNonNull(view);
+		requireNonNull(moves);
+		requireNonNull(callback);
+		//callback.accept(new PassMove(this.colour()));
 	}
 	
 }
