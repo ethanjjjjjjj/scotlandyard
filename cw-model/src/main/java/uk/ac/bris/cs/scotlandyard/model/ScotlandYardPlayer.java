@@ -1,6 +1,6 @@
 
 package uk.ac.bris.cs.scotlandyard.model;
-
+import uk.ac.bris.cs.scotlandyard.ui.controller.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -158,13 +158,13 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 		}
 		System.out.println("???");
 		// notify player of possible moves
-
+		
 
 		// check the player chooses a valid move
 		
 
 		// call the callback function to actually move the player
-		callback.accept(moveslist.get(0));
+		
 		System.out.println("Maybe");
 	}
 
