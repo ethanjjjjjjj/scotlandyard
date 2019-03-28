@@ -83,7 +83,9 @@ public abstract class BaseGame implements Controller {
 	final TicketsCounter ticketsCounter;
 	final Notifications notifications;
 	final Status status;
-
+	public Board getboard(){
+		return this.board;
+	}
 	BaseGame(ResourceManager manager, Stage stage, BoardProperty property) {
 		this.resourceManager = manager;
 		this.stage = stage;
@@ -96,7 +98,7 @@ public abstract class BaseGame implements Controller {
 		notifications = new Notifications(resourceManager, config);
 		status = new Status(resourceManager, config);
 		board = new Board(resourceManager, notifications, config);
-
+		
 		Rectangle clip = new Rectangle();
 		clip.widthProperty().bind(gamePane.widthProperty());
 		clip.heightProperty().bind(gamePane.heightProperty());

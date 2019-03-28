@@ -61,7 +61,7 @@ public final class LocalGame extends BaseGame implements Spectator {
 		stage.getIcons().add(manager.getImage(ImageResource.ICON));
 		stage.show();
 	}
-
+	
 	private LocalGame(ResourceManager manager, Stage stage, boolean showCapturedTest) {
 		super(manager, stage, new BoardProperty());
 		this.showCapturedTest = showCapturedTest;
@@ -141,7 +141,7 @@ public final class LocalGame extends BaseGame implements Spectator {
 					.filter(p -> p.colour.isDetective())
 					.collect(toList());
 
-			model = new ScotlandYardModel(
+			model = new ScotlandYardModel(this.getboard(),
 					setup.revealRounds(),
 					setup.graphProperty().get(),
 					mrX,
@@ -177,6 +177,8 @@ public final class LocalGame extends BaseGame implements Spectator {
 			controls.forEach(l -> l.onGameAttach(model, setup));
 			model.startRotate();
 		}
+
+		
 
 		void terminate() {
 			controls.forEach(model::unregisterSpectator);

@@ -24,6 +24,7 @@ import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
 import uk.ac.bris.cs.scotlandyard.model.Ticket;
 import uk.ac.bris.cs.gamekit.graph.Node;
+import uk.ac.bris.cs.scotlandyard.ui.controller.Board;
 
 
 // TODO implement all methods and pass all tests
@@ -37,10 +38,12 @@ public class ScotlandYardModel implements ScotlandYardGame {
 	int roundNumber = 0;
 	ScotlandYardPlayer currentPlayer;
 	ArrayList<Spectator> spectators;
+	Board board;
 
-	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
+	public ScotlandYardModel(Board board,List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
+				this.board=board;
 		this.spectators=new ArrayList<>();
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
