@@ -25,19 +25,21 @@ import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
 import uk.ac.bris.cs.scotlandyard.model.Ticket;
 import uk.ac.bris.cs.gamekit.graph.Node;
+import uk.ac.bris.cs.scotlandyard.model.Player;
 
 
 // TODO implement all methods and pass all tests
 public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
-	List<Boolean> rounds;
-	Graph<Integer, Transport> graph;
-	PlayerConfiguration mrX;
-	PlayerConfiguration firstDetective;
-	ArrayList<PlayerConfiguration> restOfTheDetectives;
-	ArrayList<ScotlandYardPlayer> mutablePlayers;
-	int roundNumber = 0;
-	ScotlandYardPlayer currentPlayer;
-	ArrayList<Spectator> spectators;
+	private List<Boolean> rounds;
+	private Graph<Integer, Transport> graph;
+	private PlayerConfiguration mrX;
+	private PlayerConfiguration firstDetective;
+	private ArrayList<PlayerConfiguration> restOfTheDetectives;
+	private ArrayList<ScotlandYardPlayer> mutablePlayers;
+	private int roundNumber = 0;
+	private ScotlandYardPlayer currentPlayer;
+	private int playerIterator = 0;
+	private ArrayList<Spectator> spectators;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
@@ -70,7 +72,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		checkTickets(configurations);
 		checkLocations(configurations);
 		
-		this.currentPlayer=mutablePlayers.get(0);
+		//this.currentPlayer=mutablePlayers.get(0);
 	}
 
 	//Checking attribues are not empty
@@ -149,15 +151,20 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void startRotate() {//TODO
-	
-		for(ScotlandYardPlayer p:mutablePlayers){
-			this.currentPlayer=p;	
-			Set<Move> moves = new HashSet<>();
-			moves = validMoves(p);
-			p.makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);
-			
-		}
 
+		while (playerIterator < this.mutablePlayers.size()){
+
+			Colour current = getCurrentPlayer();
+			for(ScotlandYardPlayer p:mutablePlayers){
+				if (p.colour() == current){
+					Set<Move> moves = new HashSet<>();
+					moves = validMoves(p);
+					Player.makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);
+				}
+			}
+			playerIterator++;
+		}
+		playerIterator = 0;
 	}
 
 	@Override
@@ -269,21 +276,19 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	@Override
 	public boolean isGameOver() {
 		if(this.getWinningPlayers().isEmpty()){
-			
-			
-			return false;}
+			return false;
+		}
 		else{
 			for(Spectator s : this.spectators){
 				s.onGameOver(this,this.getWinningPlayers());
 			}
-			
-			
-			return true;}
+			return true;
+		}
 	}
 
 	@Override
 	public Colour getCurrentPlayer() {
-		return this.currentPlayer.colour();
+		return this.mutablePlayers.get(this.playerIterator).colour();
 	}
 
 	@Override

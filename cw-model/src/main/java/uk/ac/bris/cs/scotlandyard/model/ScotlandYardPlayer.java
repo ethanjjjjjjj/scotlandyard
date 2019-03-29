@@ -3,17 +3,12 @@ package uk.ac.bris.cs.scotlandyard.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.function.Consumer;
-import uk.ac.bris.cs.scotlandyard.model.PassMove;
-import static java.util.Objects.requireNonNull;
 
 
 /**
  * A class that contains all the information about a particular player.
  */
-public class ScotlandYardPlayer implements Player {
+public class ScotlandYardPlayer {
 
 	private final Player player;
 	private final Colour colour;
@@ -149,14 +144,6 @@ public class ScotlandYardPlayer implements Player {
 		sb.append(", tickets=").append(tickets);
 		sb.append('}');
 		return sb.toString();
-	}
-
-	@Override
-	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
-		requireNonNull(view);
-		requireNonNull(moves);
-		requireNonNull(callback);
-		//callback.accept(new PassMove(this.colour()));
 	}
 	
 }
