@@ -159,7 +159,8 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 				if (p.colour() == current){
 					Set<Move> moves = new HashSet<>();
 					moves = validMoves(p);
-					Player.makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);
+					//moves.add(new PassMove(BLACK));
+					p.player().makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);
 				}
 			}
 			playerIterator++;
@@ -309,7 +310,6 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void accept(Move t) {
-		System.out.println("Hell");
 		Colour current = getCurrentPlayer();
 		ScotlandYardPlayer currentPlayer = this.mutablePlayers.get(0);
 		for (ScotlandYardPlayer p :  this.mutablePlayers){
@@ -336,7 +336,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			}
 			@Override
 			public void visit(PassMove m){
-				System.out.println("DSFAFGFDA");
+				System.out.println("Pass move used");
 			}
 		});
 	}
