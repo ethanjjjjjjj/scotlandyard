@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * A class that contains all the information about a particular player.
  */
-public class ScotlandYardPlayer implements Player,Consumer<Move> {
+public class ScotlandYardPlayer implements Player{
 
 	private final Player player;
 	private final Colour colour;
@@ -168,45 +168,6 @@ public class ScotlandYardPlayer implements Player,Consumer<Move> {
 		System.out.println("Maybe");
 	}
 
-	@Override
-	public void accept(Move m) {
-		if (m instanceof TicketMove) {
-			// Did some horrible typecasting to force m to be a ticket move
-			TicketMove n = (TicketMove) m;
-			int newLocation = n.destination();
-			Ticket theTicket = n.ticket();
-			this.location = newLocation;
-			System.out.println(this.tickets);
-			System.out.println("HELP");
-			this.removeTicket(theTicket);
-			System.out.println(this.tickets);
 
-			// YOUR STUFF
-			// this.location = m.destination();
-			// this.addTicket(m.ticket(),-1);
-		}
-		// Remeber ticket has to be given to MrX
-		else if (m instanceof PassMove) {
-			System.out.println("SFSAGSDGF");
-			// Nothing happens, so maybe remove this?
-
-		} else if (m instanceof DoubleMove) {
-			DoubleMove n = (DoubleMove) m;
-			// I'm not sure if when MrX uses a DoubleMove, he must also use two other
-			// tickets
-			Ticket ticket1 = n.firstMove().ticket();
-			Ticket ticket2 = n.secondMove().ticket();
-			int newLocation = n.finalDestination();
-			this.removeTicket(ticket1);
-			this.removeTicket(ticket2);
-			this.removeTicket(Ticket.DOUBLE);
-			this.location = newLocation;
-
-		}
-	}
-
-	@Override
-	public Consumer<Move> andThen(Consumer<? super Move> after) {
-		return Consumer.super.andThen(after);
-	}
+	
 }
