@@ -171,7 +171,8 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			}
 
 			System.out.println(p.colour());
-			p.makeMove(this, p.location(), moves, p);
+			
+			p.makeMove(this, p.location(), moves, this);
 			for (Spectator s : this.spectators) {
 				s.onMoveMade(this, pass);
 			}
@@ -325,6 +326,8 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void accept(Move m) {
+		this.currentPlayer.location(m.)
+
 
 	}
 }

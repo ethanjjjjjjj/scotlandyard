@@ -151,22 +151,10 @@ public class ScotlandYardPlayer implements Player{
 
 	@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
-
-		ArrayList<Move> moveslist=new ArrayList<>();
-		for(Move item:moves){
-			moveslist.add(item);
-		}
-		System.out.println("???");
-		// notify player of possible moves
-		
-
-		// check the player chooses a valid move
-		
-
-		// call the callback function to actually move the player
-		
-		System.out.println("Maybe");
+		this.player.makeMove(view, location, moves, callback);
 	}
+
+	
 
 
 	
