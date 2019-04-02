@@ -27,15 +27,15 @@ import uk.ac.bris.cs.gamekit.graph.Node;
 
 // TODO implement all methods and pass all tests
 public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
-	List<Boolean> rounds;
-	Graph<Integer, Transport> graph;
-	PlayerConfiguration mrX;
-	PlayerConfiguration firstDetective;
-	ArrayList<PlayerConfiguration> restOfTheDetectives;
-	ArrayList<ScotlandYardPlayer> mutablePlayers;
-	int roundNumber = 0;
-	ScotlandYardPlayer currentPlayer;
-	ArrayList<Spectator> spectators;
+	private List<Boolean> rounds;
+	private Graph<Integer, Transport> graph;
+	private PlayerConfiguration mrX;
+	private PlayerConfiguration firstDetective;
+	private ArrayList<PlayerConfiguration> restOfTheDetectives;
+	private ArrayList<ScotlandYardPlayer> mutablePlayers;
+	private int roundNumber = 0;
+	private ScotlandYardPlayer currentPlayer;
+	private ArrayList<Spectator> spectators;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph, PlayerConfiguration mrX,
 			PlayerConfiguration firstDetective, PlayerConfiguration... restOfTheDetectives) {
