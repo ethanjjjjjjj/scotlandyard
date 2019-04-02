@@ -325,6 +325,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void accept(Move m) {
+		requireNonNull(m);
 		if (m instanceof TicketMove) {
 			TicketMove n = (TicketMove) m;
 			int newLocation = n.destination();
