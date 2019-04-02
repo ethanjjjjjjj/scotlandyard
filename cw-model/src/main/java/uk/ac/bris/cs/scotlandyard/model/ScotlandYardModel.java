@@ -170,7 +170,6 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 				}
 			}
 
-			System.out.println(p.colour());
 			
 			p.makeMove(this, p.location(), moves, this);
 			for (Spectator s : this.spectators) {
@@ -327,15 +326,11 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	@Override
 	public void accept(Move m) {
 		if (m instanceof TicketMove) {
-			// Did some horrible typecasting to force m to be a ticket move
 			TicketMove n = (TicketMove) m;
 			int newLocation = n.destination();
 			Ticket theTicket = n.ticket();
 			this.currentPlayer.location(newLocation);
-			//System.out.println(this.currentPlayer.tickets);
-			System.out.println("HELP");
 			this.currentPlayer.removeTicket(theTicket);
-			//System.out.println(this.tickets);
 
 			// YOUR STUFF
 			// this.location = m.destination();
@@ -343,13 +338,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		}
 		// Remeber ticket has to be given to MrX
 		else if (m instanceof PassMove) {
-			System.out.println("SFSAGSDGF");
-			// Nothing happens, so maybe remove this?
 
 		} else if (m instanceof DoubleMove) {
 			DoubleMove n = (DoubleMove) m;
-			// I'm not sure if when MrX uses a DoubleMove, he must also use two other
-			// tickets
 			Ticket ticket1 = n.firstMove().ticket();
 			Ticket ticket2 = n.secondMove().ticket();
 			int newLocation = n.finalDestination();
