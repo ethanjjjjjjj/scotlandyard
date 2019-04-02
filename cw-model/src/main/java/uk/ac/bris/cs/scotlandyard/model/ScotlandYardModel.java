@@ -326,9 +326,39 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void accept(Move m) {
-		this.currentPlayer.location(m.)
+		if (m instanceof TicketMove) {
+			// Did some horrible typecasting to force m to be a ticket move
+			TicketMove n = (TicketMove) m;
+			int newLocation = n.destination();
+			Ticket theTicket = n.ticket();
+			this.currentPlayer.location(newLocation);
+			//System.out.println(this.currentPlayer.tickets);
+			System.out.println("HELP");
+			this.currentPlayer.removeTicket(theTicket);
+			//System.out.println(this.tickets);
 
+			// YOUR STUFF
+			// this.location = m.destination();
+			// this.addTicket(m.ticket(),-1);
+		}
+		// Remeber ticket has to be given to MrX
+		else if (m instanceof PassMove) {
+			System.out.println("SFSAGSDGF");
+			// Nothing happens, so maybe remove this?
 
+		} else if (m instanceof DoubleMove) {
+			DoubleMove n = (DoubleMove) m;
+			// I'm not sure if when MrX uses a DoubleMove, he must also use two other
+			// tickets
+			Ticket ticket1 = n.firstMove().ticket();
+			Ticket ticket2 = n.secondMove().ticket();
+			int newLocation = n.finalDestination();
+			this.currentPlayer.removeTicket(ticket1);
+			this.currentPlayer.removeTicket(ticket2);
+			this.currentPlayer.removeTicket(Ticket.DOUBLE);
+			this.currentPlayer.location(newLocation);
+
+		}
 	}
 }
 
