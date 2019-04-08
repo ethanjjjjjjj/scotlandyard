@@ -312,6 +312,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	//When MrX plays, the round increments
 	private void roundIncrementer(Move m){
 		if (this.currentPlayer instanceof ScotlandYardMrX){
+			this.spectatorMethods();
 			System.out.println("MR X");
 			//Remember that the round is stored in MrX's class
 			ScotlandYardMrX x = (ScotlandYardMrX)this.currentPlayer;
@@ -319,12 +320,11 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			x.incTurnsPlayed();
 			System.out.println("ROUNDS  "+x.turnsPlayed());
 			//This is called because round starts when MrX has played
-			spectatorMethods();
+			
 		}
 		//This is to call onMoveMade
-		spectatorMethods(m);
-		//This is to get the next player
-		nextPlayer();
+
+		this.spectatorMethods(m);
 	}
 
 	//onRoundStarted must be called when round increments
@@ -343,7 +343,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	}
 	
 	//This changes the current player
-	private void nextPlayer(){
+	private int nextPlayer(){
 		System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
 		int i = this.mutablePlayers.indexOf(this.currentPlayer);
 		System.out.println("PLAYER ARRAY I  "+i);
@@ -354,12 +354,14 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			for(Spectator s : getSpectators()){
 				s.onRotationComplete(this);
 			}
+			return -1;
 		}
 		//Else it's just the next player in the list
 		else{
 			this.currentPlayer = this.mutablePlayers.get(i+1);
+			return 1;
 		}
-		System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
+		//System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
 	}
 
 	@Override
@@ -371,7 +373,8 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			Ticket theTicket = n.ticket();
 			this.currentPlayer.location(newLocation);
 			this.currentPlayer.removeTicket(theTicket);
-			roundIncrementer(m);
+			this.roundIncrementer(m);
+			
 		}
 		// Remeber ticket has to be given to MrX
 		else if (m instanceof PassMove) {
@@ -382,12 +385,17 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			Ticket ticket2 = n.secondMove().ticket();
 			int newLocation = n.finalDestination();
 			this.currentPlayer.removeTicket(ticket1);
-			roundIncrementer(m);
+			this.roundIncrementer(m);
 			this.currentPlayer.removeTicket(ticket2);
-			roundIncrementer(m);
+			this.roundIncrementer(m);
 			this.currentPlayer.removeTicket(Ticket.DOUBLE);
 			this.currentPlayer.location(newLocation);
 		}
+
+		if(this.nextPlayer()==1){
+		Set<Move> moves = validMoves();
+		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);}
+		else{}
 	}
 }
 
