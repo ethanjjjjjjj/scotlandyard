@@ -145,7 +145,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		this.spectators.remove(spectator);
 	}
 
-	/*private Set<Move> validMoves(){
+	private Set<Move> validMoves(){
 		Set<Move> moves = new HashSet<>();
 		ScotlandYardPlayer p = this.currentPlayer;
 		for (Edge<Integer, Transport> e : this.graph.getEdgesFrom(this.graph.getNode(p.location()))) {
@@ -154,52 +154,12 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			}
 		}
 		return moves;
-
-	}*/
+	}
 
 	@Override
 	public void startRotate() {// TODO
-
-		/*
-
-		
-		*/
-
-		Set<Move> moves;
-		ScotlandYardPlayer MrX = this.mutablePlayers.get(0);
-		Move pass;
-
-		for (ScotlandYardPlayer p : mutablePlayers) {
-			pass = new PassMove(p.colour());
-			this.currentPlayer = p;
-			moves = new HashSet<>();
-			moves.add(pass);
-			if (p.colour() == BLACK) {
-				this.roundNumber++;
-				for (Spectator s : this.spectators) {
-					s.onRoundStarted(this, this.roundNumber);
-				}
-			}
-
-			for (Edge<Integer, Transport> e : this.graph.getEdgesFrom(this.graph.getNode(p.location()))) {
-				if (p.hasTickets(Ticket.fromTransport(e.data()))) {
-					moves.add(new TicketMove(p.colour(), Ticket.fromTransport(e.data()), e.destination().value()));
-				}
-			}
-			
-
-			
-			p.makeMove(this, p.location(), moves, this);
-			for (Spectator s : this.spectators) {
-				s.onMoveMade(this, pass);
-			}
-		}
-		// this.roundNumber++;
-
-		for (Spectator s : this.spectators) {
-			s.onRotationComplete(this);
-		}
-
+		Set<Move> moves = validMoves();
+		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
 
 	@Override
@@ -343,33 +303,33 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	}
 
 	//When MrX plays, the round increments
-	/*private void roundIncrementer(Ticket t){
+	private void roundIncrementer(Move m){
 		if (this.currentPlayer instanceof ScotlandYardMrX){
 			ScotlandYardMrX x = (ScotlandYardMrX)this.currentPlayer;
 			x.incTurnsPlayed();
 			spectatorMethods();
 		}
-		spectatorMethods(t);
+		spectatorMethods(m);
 		nextPlayer();
-	}*/
+	}
 
 	//onRoundStarted must be called when round increments
-	/*private void spectatorMethods(){
+	private void spectatorMethods(){
 		for (Spectator s : getSpectators()){
 			s.onRoundStarted(this, getCurrentRound());
 		}
-	}*/
+	}
 
-	/*
+	
 
-	private void spectatorMethods(Ticket t){
+	private void spectatorMethods(Move m){
 		for(Spectator s : getSpectators()){
-			s.onMoveMade(this,t);
+			s.onMoveMade(this,m);
 		}
 	}
-	*/
+	
 
-	/*private void nextPlayer(){
+	private void nextPlayer(){
 		int i = this.mutablePlayers.indexOf(this.currentPlayer);
 		if (i == this.mutablePlayers.size() - 1){
 			this.currentPlayer = this.mutablePlayers.get(0);
@@ -377,7 +337,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		else{
 			this.currentPlayer = this.mutablePlayers.get(i+1);
 		}
-	}*/
+	}
 
 	@Override
 	public void accept(Move m) {
@@ -388,12 +348,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			Ticket theTicket = n.ticket();
 			this.currentPlayer.location(newLocation);
 			this.currentPlayer.removeTicket(theTicket);
-
-			// YOUR STUFF
-			// this.location = m.destination();
-			// this.addTicket(m.ticket(),-1);
-
-			//roundIncrementer(theTicket);
+			roundIncrementer(m);
 		}
 		// Remeber ticket has to be given to MrX
 		else if (m instanceof PassMove) {
@@ -404,9 +359,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			Ticket ticket2 = n.secondMove().ticket();
 			int newLocation = n.finalDestination();
 			this.currentPlayer.removeTicket(ticket1);
-			//roundIncrementer(theTicket);
+			roundIncrementer(m);
 			this.currentPlayer.removeTicket(ticket2);
-			//roundIncrementer(theTicket);
+			roundIncrementer(m);
 			this.currentPlayer.removeTicket(Ticket.DOUBLE);
 			this.currentPlayer.location(newLocation);
 		}
