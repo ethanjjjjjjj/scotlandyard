@@ -351,6 +351,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		//If the current player is the final one, then MrX is the next player
 		if (i == this.mutablePlayers.size() - 1){
 			this.currentPlayer = this.mutablePlayers.get(0);
+			for(Spectator s : getSpectators()){
+				s.onRotationComplete(this);
+			}
 		}
 		//Else it's just the next player in the list
 		else{
