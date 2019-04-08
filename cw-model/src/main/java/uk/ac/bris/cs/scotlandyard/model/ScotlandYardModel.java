@@ -38,8 +38,8 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	private ArrayList<ScotlandYardPlayer> mutablePlayers;
 	private int roundNumber = 0;
 	private ScotlandYardPlayer currentPlayer;
-	private int playerIterator = 0;
 	private ArrayList<Spectator> spectators;
+	private int mrXLastSeen = 0;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
@@ -64,15 +64,15 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		configurations.add(0, mrX);
 
 		//MrX is given it's own mutable class called ScotlandYardMrX. The detectives use ScotlandYardPlayer
-		this.mutablePlayers.add(new ScotlandYardMrX(mrX.player, mrX.colour, mrX.location, mrX.tickets));
-		for (PlayerConfiguration p : configurations.subList(1,configurations.size())){
+		
+		for (PlayerConfiguration p : configurations){
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
 
 		checkTickets(configurations);
 		checkLocations(configurations);
 		
-		//this.currentPlayer=mutablePlayers.get(0);
+		this.currentPlayer=mutablePlayers.get(0);
 	}
 
 	//Checking attribues are not empty
@@ -139,38 +139,85 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		this.spectators.remove(spectator);
 	}
 
-	private Set<Move> validMoves(ScotlandYardPlayer p){
+	private Set<Move> validMoves(){
 		Set<Move> moves = new HashSet<>();
+		ScotlandYardPlayer p = this.getCurrentPlayerObject();
 		for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
-					if(p.hasTickets(Ticket.fromTransport(e.data()))){
-						moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
+			if(p.hasTickets(Ticket.fromTransport(e.data()))){
+				for (ScotlandYardPlayer q : this.mutablePlayers.subList(1, this.mutablePlayers.size())){
+					if (q.location() == e.destination().value()){
+						break;	
 					}
+					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
+				}
+			}
+			if (p.isMrX() && p.hasTickets(SECRET)){
+				moves.add(new TicketMove(p.colour(),SECRET,e.destination().value()));
+			}
 		}
+
+		if (p.isMrX() && p.hasTickets(DOUBLE)){
+			for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+				Node<Integer> n = e.destination();
+				if(p.hasTickets(Ticket.fromTransport(e.data()))){
+					for(ScotlandYardPlayer q : this.mutablePlayers.subList(1,this.mutablePlayers.size())){
+						if (q.location() == e.destination().value()){
+							break;
+						}
+						for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
+							if(p.hasTickets(Ticket.fromTransport(f.data()))){
+								for(ScotlandYardPlayer r : this.mutablePlayers.subList(1,this.mutablePlayers.size())){
+									if (r.location() == f.destination().value()){
+										break;
+									}
+									TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
+									TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
+									TicketMove secret1 = new TicketMove(p.colour(),SECRET,f.destination().value());
+									TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
+									moves.add(new DoubleMove(p.colour(), ticket1, ticket2));
+									if(p.hasTickets(SECRET)){
+										moves.add(new DoubleMove(p.colour(),ticket1,secret2));
+										moves.add(new DoubleMove(p.colour(),secret1,ticket2));
+										moves.add(new DoubleMove(p.colour(),secret1,secret2));
+									}
+								}
+							}
+						}
+					}
+				}			
+			}
+		}
+		if (moves.isEmpty()){
+			moves.add(new PassMove(p.colour()));
+		}
+		System.out.println("MOVES   "+moves);
 		return moves;
 	}
+		
+	
 
+
+	private ScotlandYardPlayer getCurrentPlayerObject(){
+		for (ScotlandYardPlayer p : this.mutablePlayers){
+			if (p.colour() == this.getCurrentPlayer()){
+				return p;
+			}
+		}
+		return this.mutablePlayers.get(0);
+	}
 	@Override
 	public void startRotate() {//TODO
 
-		while (playerIterator < this.mutablePlayers.size()){
-
-			Colour current = getCurrentPlayer();
-			for(ScotlandYardPlayer p:mutablePlayers){
-				if (p.colour() == current){
-					Set<Move> moves = new HashSet<>();
-					moves = validMoves(p);
-					//moves.add(new PassMove(BLACK));
-					p.player().makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);
-				}
-			}
-			playerIterator++;
-		}
-		playerIterator = 0;
+		ScotlandYardPlayer p = this.getCurrentPlayerObject();
+		Set<Move> moves = new HashSet<>();
+		moves = this.validMoves();
+		p.player().makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);	
 	}
+		
+	
 
 	@Override
 	public Collection<Spectator> getSpectators() {
-		
 		return this.spectators;
 	}
 
@@ -258,8 +305,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			}
 		}
 		else{
-			ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
-			return Optional.of(x.lastSeen());
+			return Optional.of(this.mrXLastSeen);
 		}
 		return Optional.empty();
 	}
@@ -289,7 +335,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public Colour getCurrentPlayer() {
-		return this.mutablePlayers.get(this.playerIterator).colour();
+		return this.currentPlayer.colour();
 	}
 
 	@Override
@@ -310,27 +356,31 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void accept(Move t) {
-		Colour current = getCurrentPlayer();
-		ScotlandYardPlayer currentPlayer = this.mutablePlayers.get(0);
-		for (ScotlandYardPlayer p :  this.mutablePlayers){
-			if (current == p.colour()){
-				currentPlayer = p;
-			}
-		}
-		final ScotlandYardPlayer finalCurrentPlayer = currentPlayer;
-		System.out.println(finalCurrentPlayer.colour());
+		//Set<Move> m = validMoves();
+		//if()
+		requireNonNull(t);
+		final ScotlandYardPlayer finalCurrentPlayer = this.currentPlayer;
+		
 		t.visit(new MoveVisitor(){
 			@Override
 			public void visit(TicketMove m){
 				finalCurrentPlayer.location(m.destination());
 				finalCurrentPlayer.removeTicket(m.ticket());
+				if(finalCurrentPlayer.isMrX()){
+					roundNumber++;
+				}
+				else{
+					mutablePlayers.get(0).addTicket(m.ticket());
+				}
 			}
 
 			@Override
 			public void visit(DoubleMove m){
 				finalCurrentPlayer.location(m.finalDestination());
 				finalCurrentPlayer.removeTicket(m.firstMove().ticket());
+				roundNumber++;
 				finalCurrentPlayer.removeTicket(m.secondMove().ticket());
+				roundNumber++;
 				finalCurrentPlayer.removeTicket(DOUBLE);
 
 			}
@@ -339,6 +389,17 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 				System.out.println("Pass move used");
 			}
 		});
+		int i = this.mutablePlayers.indexOf(this.currentPlayer);
+		if(i == this.mutablePlayers.size() - 1){
+			this.currentPlayer = this.mutablePlayers.get(0);
+		}
+		else{
+			this.currentPlayer = this.mutablePlayers.get(i+1);
+		}
+		Set<Move> newMoves = this.validMoves();
+		if(this.currentPlayer.colour() != BLACK){
+			this.currentPlayer.player().makeMove(this,this.currentPlayer.location(),newMoves,this);
+		}
 	}
 }
 
