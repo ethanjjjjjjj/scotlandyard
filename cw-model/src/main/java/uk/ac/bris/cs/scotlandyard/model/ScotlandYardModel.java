@@ -33,7 +33,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	private PlayerConfiguration firstDetective;
 	private ArrayList<PlayerConfiguration> restOfTheDetectives;
 	private ArrayList<ScotlandYardPlayer> mutablePlayers;
-	private int roundNumber = 0;
+	//private int roundNumber = 0;
 	private ScotlandYardPlayer currentPlayer;
 	private ArrayList<Spectator> spectators;
 
@@ -158,7 +158,12 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public void startRotate() {// TODO
+		//Creates a list of valid moves
 		Set<Move> moves = validMoves();
+		System.out.println("THE CURRENT PLAYER IN START ROTATE  "+this.currentPlayer);
+		if (this.currentPlayer instanceof ScotlandYardMrX){
+			System.out.println("INSTANCE OF MR X");
+		}
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
 
@@ -220,8 +225,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			return Set.copyOf(detectiveWin);
 		}
 
+		ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
 		// checks whether the round limit has been reached
-		if (this.roundNumber == getRounds().size()) {
+		if (x.turnsPlayed() == getRounds().size()) {
 			return Set.copyOf(mrXWin);
 		}
 
@@ -287,8 +293,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public int getCurrentRound() {
-		//return (ScotlandYardMrX)this.mutablePlayers.get(0).turnsPlayed();
-		return this.roundNumber;
+		ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
+		return x.turnsPlayed();
+		//return this.roundNumber;
 	}
 
 	@Override
@@ -305,38 +312,51 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	//When MrX plays, the round increments
 	private void roundIncrementer(Move m){
 		if (this.currentPlayer instanceof ScotlandYardMrX){
+			System.out.println("MR X");
+			//Remember that the round is stored in MrX's class
 			ScotlandYardMrX x = (ScotlandYardMrX)this.currentPlayer;
+			System.out.println("ROUNDS  "+x.turnsPlayed());
 			x.incTurnsPlayed();
+			System.out.println("ROUNDS  "+x.turnsPlayed());
+			//This is called because round starts when MrX has played
 			spectatorMethods();
 		}
+		//This is to call onMoveMade
 		spectatorMethods(m);
+		//This is to get the next player
 		nextPlayer();
 	}
 
 	//onRoundStarted must be called when round increments
 	private void spectatorMethods(){
+		System.out.println("CURRENT ROUND   " +getCurrentRound());
 		for (Spectator s : getSpectators()){
 			s.onRoundStarted(this, getCurrentRound());
 		}
 	}
 
-	
-
+	//onMoveMade must be called after a move
 	private void spectatorMethods(Move m){
 		for(Spectator s : getSpectators()){
 			s.onMoveMade(this,m);
 		}
 	}
 	
-
+	//This changes the current player
 	private void nextPlayer(){
+		System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
 		int i = this.mutablePlayers.indexOf(this.currentPlayer);
+		System.out.println("PLAYER ARRAY I  "+i);
+		System.out.println("SIZE OF ARRAY  "+this.mutablePlayers.size());
+		//If the current player is the final one, then MrX is the next player
 		if (i == this.mutablePlayers.size() - 1){
 			this.currentPlayer = this.mutablePlayers.get(0);
 		}
+		//Else it's just the next player in the list
 		else{
 			this.currentPlayer = this.mutablePlayers.get(i+1);
 		}
+		System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
 	}
 
 	@Override
