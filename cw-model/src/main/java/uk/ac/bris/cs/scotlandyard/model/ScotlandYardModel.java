@@ -361,6 +361,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	}*/
 
 	/*
+
 	private void spectatorMethods(Ticket t){
 		for(Spectator s : getSpectators()){
 			s.onMoveMade(this,t);
