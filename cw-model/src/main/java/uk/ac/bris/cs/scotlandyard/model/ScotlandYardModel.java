@@ -164,6 +164,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		if (this.currentPlayer instanceof ScotlandYardMrX){
 			System.out.println("INSTANCE OF MR X");
 		}
+		
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
 
@@ -310,28 +311,12 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	}
 
 	//When MrX plays, the round increments
-	private void roundIncrementer(Move m){
-		if (this.currentPlayer instanceof ScotlandYardMrX){
-			this.spectatorMethods();
-			System.out.println("MR X");
-			//Remember that the round is stored in MrX's class
-			ScotlandYardMrX x = (ScotlandYardMrX)this.currentPlayer;
-			System.out.println("ROUNDS  "+x.turnsPlayed());
-			x.incTurnsPlayed();
-			System.out.println("ROUNDS  "+x.turnsPlayed());
-			//This is called because round starts when MrX has played
-			
-		}
-		//This is to call onMoveMade
-
-		this.spectatorMethods(m);
-	}
 
 	//onRoundStarted must be called when round increments
 	private void spectatorMethods(){
-		System.out.println("CURRENT ROUND   " +getCurrentRound());
-		for (Spectator s : getSpectators()){
-			s.onRoundStarted(this, getCurrentRound());
+		System.out.println("CURRENT ROUND   " +this.getCurrentRound());
+		for (Spectator s : this.getSpectators()){
+			s.onRoundStarted(this, this.getCurrentRound());
 		}
 	}
 
@@ -367,35 +352,49 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	@Override
 	public void accept(Move m) {
 		requireNonNull(m);
+		
+		
 		if (m instanceof TicketMove) {
+			
+			if(this.currentPlayer instanceof ScotlandYardMrX){
+				
+				ScotlandYardMrX x = (ScotlandYardMrX) this.currentPlayer;
+				x.incTurnsPlayed();
+			}
+			else{this.nextPlayer();}
 			TicketMove n = (TicketMove) m;
 			int newLocation = n.destination();
 			Ticket theTicket = n.ticket();
 			this.currentPlayer.location(newLocation);
 			this.currentPlayer.removeTicket(theTicket);
-			this.roundIncrementer(m);
+			
 			
 		}
 		// Remeber ticket has to be given to MrX
 		else if (m instanceof PassMove) {
 
 		} else if (m instanceof DoubleMove) {
+			
 			DoubleMove n = (DoubleMove) m;
 			Ticket ticket1 = n.firstMove().ticket();
+			
+			
+			
 			Ticket ticket2 = n.secondMove().ticket();
 			int newLocation = n.finalDestination();
+			
+			
 			this.currentPlayer.removeTicket(ticket1);
-			this.roundIncrementer(m);
+			//this.roundIncrementer(m);
 			this.currentPlayer.removeTicket(ticket2);
-			this.roundIncrementer(m);
+			//this.roundIncrementer(m);
 			this.currentPlayer.removeTicket(Ticket.DOUBLE);
 			this.currentPlayer.location(newLocation);
+			this.nextPlayer();
+			this.spectatorMethods(m);
 		}
 
-		if(this.nextPlayer()==1){
-		Set<Move> moves = validMoves();
-		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);}
-		else{}
+		
 	}
 }
 
