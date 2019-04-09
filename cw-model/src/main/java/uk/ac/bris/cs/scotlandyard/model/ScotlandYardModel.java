@@ -37,7 +37,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	ScotlandYardPlayer currentPlayer;
 	int mrXLastSeen;
 	ArrayList<PlayerConfiguration> playerConfigurations;
-
+	boolean oneRevealRound;
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
@@ -95,9 +95,10 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		for(PlayerConfiguration p:configurations){
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
-		this.mrXLastSeen=this.mutablePlayers.get(0).location();
+		this.mrXLastSeen=0;
 		this.currentPlayer=this.mutablePlayers.get(0);
 		this.playerConfigurations=configurations;
+		this.oneRevealRound=false;
 		checkTickets(configurations);
 		checkLocations(configurations);
 		checkForEmpty(this.rounds, this.graph, this.mrX);
@@ -294,19 +295,45 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public Optional<Integer> getPlayerLocation(Colour colour) {
-		if(gamehasplayer(colour)){
-		if (colour != BLACK) {
-
-					return Optional.of(this.getMutablePlayer(colour).location());
-
-		} 
-		else{
-			for(int i=0;i<=this.getCurrentRound();i++){
-				if(this.rounds.get(i)){return Optional.of(this.mrXLastSeen);}
+		if(!(this.gamehasplayer(colour))){
+			return Optional.empty();
+		}
+		else if(colour==BLACK){
+			if(this.currentRound==0){
+				return Optional.of(0);
 			}
-			return Optional.of(0);
-		}}
-		else return Optional.empty();
+			else if(this.rounds.get(currentRound)){
+				this.mrXLastSeen=this.getMutablePlayer(colour).location();
+				this.oneRevealRound=true;
+				System.out.println(this.mrXLastSeen);
+				return Optional.of(this.mrXLastSeen);
+			}
+			else{
+				if(this.oneRevealRound){
+					System.out.println(this.mrXLastSeen);
+					return Optional.of(mrXLastSeen);
+				}
+				else{
+					System.out.println(0);
+					return Optional.of(0);
+				}
+
+
+
+
+			}
+
+
+
+
+
+			
+
+
+		}
+		else{
+			return Optional.of(this.getMutablePlayer(colour).location());
+		}
 	}
 
 	@Override
