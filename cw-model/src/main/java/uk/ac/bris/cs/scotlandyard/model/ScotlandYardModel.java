@@ -139,60 +139,105 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		this.spectators.remove(spectator);
 	}
 
+	private boolean freeSpaceAtNode(Edge<Integer,Transport> e){
+		for (ScotlandYardPlayer q : this.mutablePlayers.subList(1,this.mutablePlayers.size())){
+			if (q.location() == e.destination().value()){
+				return false;	
+			}
+		}
+		return true;
+	}
+
+	private Set<Move> allValidMoves(){
+		Set<Move> singleMoves = validMoves();
+		if (this.getCurrentPlayerObject().isMrX()){
+			Set<Move> doubleMoves = doubleValidMoves();
+			singleMoves.addAll(doubleMoves);
+		}
+		return singleMoves;
+	}
+
 	private Set<Move> validMoves(){
 		Set<Move> moves = new HashSet<>();
 		ScotlandYardPlayer p = this.getCurrentPlayerObject();
 		for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
-			if(p.hasTickets(Ticket.fromTransport(e.data()))){
-				for (ScotlandYardPlayer q : this.mutablePlayers.subList(1, this.mutablePlayers.size())){
-					if (q.location() == e.destination().value()){
-						break;	
-					}
-					moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));
-				}
+			if(p.hasTickets(Ticket.fromTransport(e.data())) && this.freeSpaceAtNode(e)){
+				moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));	
 			}
-			if (p.isMrX() && p.hasTickets(SECRET)){
-				moves.add(new TicketMove(p.colour(),SECRET,e.destination().value()));
-			}
-		}
 
-		if (p.isMrX() && p.hasTickets(DOUBLE)){
-			for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
-				Node<Integer> n = e.destination();
-				if(p.hasTickets(Ticket.fromTransport(e.data()))){
-					for(ScotlandYardPlayer q : this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-						if (q.location() == e.destination().value()){
-							break;
-						}
-						for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
-							if(p.hasTickets(Ticket.fromTransport(f.data()))){
-								for(ScotlandYardPlayer r : this.mutablePlayers.subList(1,this.mutablePlayers.size())){
-									if (r.location() == f.destination().value()){
-										break;
-									}
-									TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
-									TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
-									TicketMove secret1 = new TicketMove(p.colour(),SECRET,f.destination().value());
-									TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
-									moves.add(new DoubleMove(p.colour(), ticket1, ticket2));
-									if(p.hasTickets(SECRET)){
-										moves.add(new DoubleMove(p.colour(),ticket1,secret2));
-										moves.add(new DoubleMove(p.colour(),secret1,ticket2));
-										moves.add(new DoubleMove(p.colour(),secret1,secret2));
-									}
-								}
-							}
-						}
-					}
-				}			
+			if (p.isMrX() && p.hasTickets(SECRET) && this.freeSpaceAtNode(e)){
+				moves.add(new TicketMove(p.colour(),SECRET,e.destination().value()));
 			}
 		}
 		if (moves.isEmpty()){
 			moves.add(new PassMove(p.colour()));
 		}
-		System.out.println("MOVES   "+moves);
 		return moves;
 	}
+
+	private boolean checkMrXHasTwoTicketsOfSame(Ticket t, Edge<Integer,Transport> e, ScotlandYardPlayer p){
+		if (!p.hasTickets(Ticket.fromTransport(e.data()))){
+			return false;
+		}
+		if (t == Ticket.fromTransport(e.data()) && p.hasTickets(t,1)){
+			return false;
+		}
+		return true;
+	}
+	private Set<Move> doubleValidMoves(){
+		Set<Move> moves = new HashSet<>();
+		ScotlandYardPlayer p = this.getCurrentPlayerObject();
+		if (p.hasTickets(DOUBLE) && this.roundNumber <= this.rounds.size() - 2){
+			for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
+				Node<Integer> n = e.destination();
+				if(p.hasTickets(Ticket.fromTransport(e.data())) && this.freeSpaceAtNode(e)){
+					Ticket t = Ticket.fromTransport(e.data());
+
+					//Checks if MrX has enough tickets to perform a double move with transport tickets
+					for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
+						if(this.checkMrXHasTwoTicketsOfSame(t, f, p) && this.freeSpaceAtNode(e)){
+							TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
+							TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
+							moves.add(new DoubleMove(p.colour(), ticket1, ticket2));		
+						}
+						
+						//If MrX only has one of the first ticket, then a secret move on the second move can be made
+						else{
+							if(p.hasTickets(SECRET)){
+								TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
+								TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
+								moves.add(new DoubleMove(p.colour(),ticket1,secret2));
+							}
+						}
+
+						//MrX can also do a double secret move if they have enough tickets
+						if(p.hasTickets(SECRET,2)){
+							TicketMove secret1 = new TicketMove(p.colour(),SECRET,e.destination().value());
+							TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
+							moves.add(new DoubleMove(p.colour(),secret1,secret2));
+						}
+					}
+				}
+				
+				//If MrX does not have the first transport ticket, they can make a secret move on the first move
+				else{
+					if (p.hasTickets(SECRET)){
+						TicketMove secret1 = new TicketMove(p.colour(),SECRET,e.destination().value());
+						for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
+							if(p.hasTickets(Ticket.fromTransport(f.data())) && this.freeSpaceAtNode(f)){
+								TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
+								moves.add(new DoubleMove(p.colour(), secret1, ticket2));
+
+							}
+						}
+					}
+					
+				}			
+			}
+		}
+		return moves;
+	}
+
 		
 	
 
@@ -210,7 +255,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 		ScotlandYardPlayer p = this.getCurrentPlayerObject();
 		Set<Move> moves = new HashSet<>();
-		moves = this.validMoves();
+		moves = this.allValidMoves();
 		p.player().makeMove(this,p.location(),ImmutableSet.copyOf(moves),this);	
 	}
 		
