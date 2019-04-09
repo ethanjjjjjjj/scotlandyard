@@ -42,6 +42,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
+				this.spectators=new ArrayList<>();
 				
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
@@ -322,9 +323,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 			return false;
 		} else {
-			//for (Spectator s : this.spectators) {
-			//	s.onGameOver(this, this.getWinningPlayers());
-			//}
+			for (Spectator s : this.spectators) {
+				s.onGameOver(this, this.getWinningPlayers());
+			}
 
 			return true;
 		}
