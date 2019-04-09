@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.ArrayList;
 
 /**
  * A class that contains all the information about a particular player.
@@ -136,6 +135,12 @@ public class ScotlandYardPlayer implements Player{
 	 */
 	public boolean hasTickets(Ticket ticket, int quantityInclusive) {
 		return tickets.get(ticket) >= quantityInclusive;
+	}
+
+
+	@Override
+	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
+		this.player.makeMove(view, location, moves, callback);
 	}
 
 	@Override
