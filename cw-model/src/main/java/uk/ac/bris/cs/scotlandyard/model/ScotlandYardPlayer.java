@@ -137,6 +137,7 @@ public class ScotlandYardPlayer {
 
 	//@Override
 	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
+		
 		this.player.makeMove(view, location, moves, callback);
 	}
 

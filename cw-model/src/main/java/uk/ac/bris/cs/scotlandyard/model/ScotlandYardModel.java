@@ -370,17 +370,16 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public void accept(Move m) {
-
+		if(this.validMoves().contains(m)){}
+		else{throw new IllegalArgumentException();}
 
 		requireNonNull(m);
 		
 		
 		if (m instanceof TicketMove) {
 			
-			if(this.currentPlayer.colour()==BLACK){
-				
-				this.currentRound++;
-			}
+			if(this.currentPlayer.colour()==BLACK)this.currentRound++;
+			
 
 			else{this.nextPlayer();}
 			TicketMove n = (TicketMove) m;
