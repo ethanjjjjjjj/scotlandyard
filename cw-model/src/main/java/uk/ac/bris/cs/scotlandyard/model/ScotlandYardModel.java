@@ -366,16 +366,12 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 
 	void nextPlayer(){
-
-
 		if(this.mutablePlayers.get(this.mutablePlayers.size()-1)==this.currentPlayer){
 			this.currentPlayer=this.mutablePlayers.get(0);
 		}
 		else{
 			this.currentPlayer=this.mutablePlayers.get(this.mutablePlayers.indexOf(this.currentPlayer)+1);
 		}
-
-
 	}
 
 
@@ -388,50 +384,38 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		else{throw new IllegalArgumentException();}
 
 		
-		
-		
 		if (m instanceof TicketMove) {
-			
 			if(this.currentPlayer.colour()==BLACK)this.currentRound++;
-			else{this.nextPlayer();}
 			TicketMove n = (TicketMove) m;
 			int newLocation = n.destination();
 			Ticket theTicket = n.ticket();
 			this.currentPlayer.location(newLocation);
 			this.currentPlayer.removeTicket(theTicket);
-			
-			
+			if (this.currentPlayer.isDetective()){
+				this.mutablePlayers.get(0).addTicket(theTicket);
+			}
+			this.nextPlayer();
 		}
-		// Remeber ticket has to be given to MrX
+
 		else if (m instanceof PassMove) {
 			this.nextPlayer();
-		} else if (m instanceof DoubleMove) {
-			
+		} 
+
+		else if (m instanceof DoubleMove) {
 			DoubleMove n = (DoubleMove) m;
 			Ticket ticket1 = n.firstMove().ticket();
 			Ticket ticket2 = n.secondMove().ticket();
 			int newLocation = n.finalDestination();
 			
-			
 			this.currentPlayer.removeTicket(ticket1);
-			//this.roundIncrementer(m);
 			this.currentPlayer.removeTicket(ticket2);
-			//this.roundIncrementer(m);
 			this.currentPlayer.removeTicket(Ticket.DOUBLE);
 			this.currentPlayer.location(newLocation);
 			this.nextPlayer();
-			//this.spectatorMethods(m);
 		}
-
-		
-
-
-
-
-
-
-
-
+		if (this.currentPlayer.isDetective()){
+			this.startRotate();
+		}
 	}
 
 
