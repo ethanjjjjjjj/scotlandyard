@@ -362,49 +362,53 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
-
-
-
+	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
 		requireNonNull(m);
 		if(this.allValidMoves().contains(m)){}
 		else{throw new IllegalArgumentException();}
 
-		
-		if (m instanceof TicketMove) {
-			if(this.currentPlayer.colour()==BLACK)this.currentRound++;
-			TicketMove n = (TicketMove) m;
-			int newLocation = n.destination();
-			Ticket theTicket = n.ticket();
-			this.currentPlayer.location(newLocation);
-			this.currentPlayer.removeTicket(theTicket);
-			if (this.currentPlayer.isDetective()){
-				this.mutablePlayers.get(0).addTicket(theTicket);
+		m.visit(new MoveVisitor() {
+			@Override
+			public void visit(PassMove m) {
 			}
-			this.nextPlayer();
-		}
+			@Override
+			public void visit(TicketMove m) {
+				editPlayerTickets(m);
+			}
+			@Override
+			public void visit(DoubleMove m) {
+				System.out.println("INITIAL POSITION  " + currentPlayer.location());
+				System.out.println("CURRENT ROUND  " + currentRound);
+				TicketMove move1 = m.firstMove();
+				TicketMove move2 = m.secondMove();
+				editPlayerTickets(move1);
+				System.out.println("FIRST TICKET MOVE  " + currentPlayer.location());
+				System.out.println("CURRENT ROUND  " + currentRound);
+				editPlayerTickets(move2);
+				System.out.println("SECOND TICKET MOVE  " + currentPlayer.location());
+				System.out.println("CURRENT ROUND  " + currentRound);
+			}
+		});
 
-		else if (m instanceof PassMove) {
-			this.nextPlayer();
-		} 
-
-		else if (m instanceof DoubleMove) {
-			DoubleMove n = (DoubleMove) m;
-			Ticket ticket1 = n.firstMove().ticket();
-			Ticket ticket2 = n.secondMove().ticket();
-			int newLocation = n.finalDestination();
-			this.currentPlayer.removeTicket(ticket1);
-			this.currentPlayer.removeTicket(ticket2);
-			this.currentPlayer.removeTicket(Ticket.DOUBLE);
-			this.currentPlayer.location(newLocation);
-			this.nextPlayer();
-		}
+		this.nextPlayer();
+	
 		if (this.currentPlayer.isDetective()){
 			this.startRotate();
 		}
 	}
 
+	private void editPlayerTickets(TicketMove m){
+		if(this.currentPlayer.colour().isMrX())this.currentRound++;
+		int newLocation = m.destination();
+		Ticket theTicket = m.ticket();
+		this.currentPlayer.location(newLocation);
+		this.currentPlayer.removeTicket(theTicket);
+		if (this.currentPlayer.isDetective()){
+			this.mutablePlayers.get(0).addTicket(theTicket);
+		}
+	}
 
 	//Checks there is no detective at a specified node for generating valid moves
 	private boolean freeSpaceAtNode(Edge<Integer,Transport> e){
