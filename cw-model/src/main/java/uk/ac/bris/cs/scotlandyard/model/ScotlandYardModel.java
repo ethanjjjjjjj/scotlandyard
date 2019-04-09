@@ -175,65 +175,34 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		return moves;
 	}
 
-	private boolean checkMrXHasTwoTicketsOfSame(Ticket t, Edge<Integer,Transport> e, ScotlandYardPlayer p){
-		if (!p.hasTickets(Ticket.fromTransport(e.data()))){
-			return false;
-		}
-		if (t == Ticket.fromTransport(e.data()) && p.hasTickets(t,1)){
-			return false;
-		}
-		return true;
-	}
 	private Set<Move> doubleValidMoves(){
 		Set<Move> moves = new HashSet<>();
 		ScotlandYardPlayer p = this.getCurrentPlayerObject();
 		if (p.hasTickets(DOUBLE) && this.roundNumber <= this.rounds.size() - 2){
 			for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 				Node<Integer> n = e.destination();
-				if(p.hasTickets(Ticket.fromTransport(e.data())) && this.freeSpaceAtNode(e)){
-					Ticket t = Ticket.fromTransport(e.data());
-
-					//Checks if MrX has enough tickets to perform a double move with transport tickets
-					for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
-						if(this.checkMrXHasTwoTicketsOfSame(t, f, p) && this.freeSpaceAtNode(e)){
-							TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
-							TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
-							moves.add(new DoubleMove(p.colour(), ticket1, ticket2));		
+				Ticket t = Ticket.fromTransport(e.data());
+				//Checks if MrX has enough tickets to perform a double move with transport tickets
+				for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
+					Ticket s = Ticket.fromTransport(f.data());
+					if(((t == s && p.hasTickets(t,2)) || (t != s && p.hasTickets(t) && p.hasTickets(s))) && freeSpaceAtNode(e) && freeSpaceAtNode(f)){
+						TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
+						TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
+						moves.add(new DoubleMove(p.colour(), ticket1, ticket2));								
+					}
+					if(p.hasTickets(SECRET) && freeSpaceAtNode(e) && freeSpaceAtNode(f)){
+						TicketMove secret1 = new TicketMove(p.colour(),SECRET,e.destination().value());
+						TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
+						if (p.hasTickets(SECRET,2)){
+							moves.add(new DoubleMove(p.colour(), secret1, secret2));
 						}
-						
-						//If MrX only has one of the first ticket, then a secret move on the second move can be made
-						else{
-							if(p.hasTickets(SECRET)){
-								TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
-								TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
-								moves.add(new DoubleMove(p.colour(),ticket1,secret2));
-							}
-						}
-
-						//MrX can also do a double secret move if they have enough tickets
-						if(p.hasTickets(SECRET,2)){
-							TicketMove secret1 = new TicketMove(p.colour(),SECRET,e.destination().value());
-							TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
-							moves.add(new DoubleMove(p.colour(),secret1,secret2));
-						}
+						TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
+						TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
+						moves.add(new DoubleMove(p.colour(), ticket1, secret2));
+						moves.add(new DoubleMove(p.colour(), secret1, ticket2));
 					}
 				}
-				
-				//If MrX does not have the first transport ticket, they can make a secret move on the first move
-				else{
-					if (p.hasTickets(SECRET)){
-						TicketMove secret1 = new TicketMove(p.colour(),SECRET,e.destination().value());
-						for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
-							if(p.hasTickets(Ticket.fromTransport(f.data())) && this.freeSpaceAtNode(f)){
-								TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
-								moves.add(new DoubleMove(p.colour(), secret1, ticket2));
-
-							}
-						}
-					}
-					
-				}			
-			}
+			}			
 		}
 		return moves;
 	}
