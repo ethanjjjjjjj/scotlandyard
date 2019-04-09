@@ -366,7 +366,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 
 	void nextPlayer(){
-		if(this.mutablePlayers.get(this.mutablePlayers.size()-1)==this.currentPlayer){
+		if(this.mutablePlayers.get((this.mutablePlayers.size())-1)==this.currentPlayer){
 			this.currentPlayer=this.mutablePlayers.get(0);
 		}
 		else{
@@ -406,7 +406,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			Ticket ticket1 = n.firstMove().ticket();
 			Ticket ticket2 = n.secondMove().ticket();
 			int newLocation = n.finalDestination();
-			
 			this.currentPlayer.removeTicket(ticket1);
 			this.currentPlayer.removeTicket(ticket2);
 			this.currentPlayer.removeTicket(Ticket.DOUBLE);
