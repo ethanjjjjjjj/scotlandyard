@@ -315,7 +315,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			if(this.currentRound==0){
 				return Optional.of(0);
 			}
-			else if(this.rounds.get(currentRound)){
+			else if(this.rounds.get(currentRound - 1)){
 				this.mrXLastSeen=this.getMutablePlayer(colour).location();
 				this.oneRevealRound=true;
 				System.out.println(this.mrXLastSeen);
