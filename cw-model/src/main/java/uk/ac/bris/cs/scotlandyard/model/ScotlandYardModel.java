@@ -47,49 +47,15 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
-		
 		this.firstDetective=requireNonNull(firstDetective);
 		this.restOfTheDetectives=requireNonNull(restOfTheDetectives);
-		if (rounds.isEmpty()) {
-			throw new IllegalArgumentException("Empty rounds");
-		}
-		
-		if (graph.isEmpty()){
-			throw new IllegalArgumentException("Empty grpah");
-		}
-
-		if (mrX.colour != BLACK) {
-			throw new IllegalArgumentException("MrX should be Black");
-		}
-
-
-
 
 		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
-
 		configurations.add(mrX);
 		configurations.add(firstDetective);
-		
-
 		for (PlayerConfiguration configuration : restOfTheDetectives){
 			configurations.add(requireNonNull(configuration));
 		}
-		Set<Integer> set = new HashSet<>();//Checking there are not duplicate colours or locations
-		Set<Colour> setColour = new HashSet<>();
-		for (PlayerConfiguration configuration : configurations) {
-			if (set.contains(configuration.location)){
-				throw new IllegalArgumentException("Duplicate location");
-			}
-			if (setColour.contains(configuration.colour)){
-				throw new IllegalArgumentException("Duplicate colour");
-			}
-		set.add(configuration.location);
-		setColour.add(configuration.colour);
-		}	
-
-
-
-
 		//creates a list of scotlandyardplayer objects that can me modified
 		this.mutablePlayers=new ArrayList<>();
 		for(PlayerConfiguration p:configurations){
@@ -99,16 +65,13 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		this.currentPlayer=this.mutablePlayers.get(0);
 		this.playerConfigurations=configurations;
 		this.oneRevealRound=false;
-		checkTickets(configurations);
-		checkLocations(configurations);
-		checkForEmpty(this.rounds, this.graph, this.mrX);
-
+		this.checkTickets(configurations);
+		this.checkLocations(configurations);
+		this.checkForEmpty(this.rounds, this.graph, this.mrX);
 	}
 
-
-
 	// Checking attribues are not empty
-	public void checkForEmpty(List<Boolean> rounds, Graph<Integer, Transport> graph, PlayerConfiguration mrX) {
+	private void checkForEmpty(List<Boolean> rounds, Graph<Integer, Transport> graph, PlayerConfiguration mrX) {
 		if (rounds.isEmpty()) {
 			throw new IllegalArgumentException("Empty rounds");
 		}
@@ -122,11 +85,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
-
-
-
 	// Checking there are not duplicate colours or locations
-	public void checkLocations(ArrayList<PlayerConfiguration> configs) {
+	private void checkLocations(ArrayList<PlayerConfiguration> configs) {
 		Set<Integer> setLocation = new HashSet<>();
 		Set<Colour> setColour = new HashSet<>();
 		for (PlayerConfiguration configuration : configs) {
@@ -142,28 +102,27 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	// Checks whether the detective pr MrX has invalid tickets or missing tickets
-	public void checkTickets(ArrayList<PlayerConfiguration> configs) {
-		for (PlayerConfiguration player : configs) {
-			if (player.tickets.containsKey(DOUBLE) || player.tickets.containsKey(SECRET)) {
-				if (player.colour.isDetective()
-						&& (player.tickets.get(DOUBLE) != 0 || player.tickets.get(SECRET) != 0)) {
+	private void checkTickets(ArrayList<PlayerConfiguration> configs) {
+		for (PlayerConfiguration p : configs) {
+			if (p.tickets.containsKey(DOUBLE) || p.tickets.containsKey(SECRET)) {
+				if (p.colour.isDetective()
+						&& (p.tickets.get(DOUBLE) != 0 || p.tickets.get(SECRET) != 0)) {
 					throw new IllegalArgumentException("Detective has invalid tickets");
 				}
 			}
-			if (player.colour.isDetective()
-					&& (!(player.tickets.containsKey(Ticket.TAXI)) || !(player.tickets.containsKey(Ticket.BUS))
-							|| !(player.tickets.containsKey(Ticket.UNDERGROUND)))) {
+			if (p.colour.isDetective()
+					&& (!(p.tickets.containsKey(Ticket.TAXI)) || !(p.tickets.containsKey(Ticket.BUS))
+							|| !(p.tickets.containsKey(Ticket.UNDERGROUND)))) {
 
 				throw new IllegalArgumentException("Detective Missing tickets");
 			}
-			if (player.colour.isMrX() && (!(player.tickets.containsKey(Ticket.TAXI))
-					|| !(player.tickets.containsKey(Ticket.BUS)) || !(player.tickets.containsKey(Ticket.UNDERGROUND))
-					|| !(player.tickets.containsKey(Ticket.DOUBLE)) || !(player.tickets.containsKey(Ticket.SECRET)))) {
+			if (p.colour.isMrX() && (!(p.tickets.containsKey(Ticket.TAXI))
+					|| !(p.tickets.containsKey(Ticket.BUS)) || !(p.tickets.containsKey(Ticket.UNDERGROUND))
+					|| !(p.tickets.containsKey(Ticket.DOUBLE)) || !(p.tickets.containsKey(Ticket.SECRET)))) {
 				throw new IllegalArgumentException("Mr X Missing tickets");
 			}
 		}
 	}
-
 
 	@Override
 	public void registerSpectator(Spectator spectator) {
@@ -187,7 +146,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	public void startRotate() {
 		Set<Move> moves = allValidMoves();
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
-
 	}
 
 	@Override
@@ -197,7 +155,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public List<Colour> getPlayers() {
-		
 		ArrayList<Colour> players= new ArrayList<>();
 		players.add(this.mrX.colour);
 		players.add(this.firstDetective.colour);
@@ -210,7 +167,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	@Override
 	public Set<Colour> getWinningPlayers() {
 		ArrayList<Colour> mrXWin = new ArrayList<>();
-
 		mrXWin.add(this.mutablePlayers.get(0).colour());
 
 		ArrayList<Colour> detectiveWin = new ArrayList<>();
@@ -284,7 +240,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		throw new NullPointerException();
 	}
-	
 
 	Boolean gamehasplayer(Colour colour){
 		for(ScotlandYardPlayer p: this.mutablePlayers){
@@ -347,13 +302,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	@Override
 	public boolean isGameOver() {
 		if (this.getWinningPlayers().isEmpty()) {
-
 			return false;
 		} else {
 			for (Spectator s : this.spectators) {
 				s.onGameOver(this, this.getWinningPlayers());
 			}
-
 			return true;
 		}
 	}
@@ -514,10 +467,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		return moves;
 	}
-
-
-
-
 }
 
 
