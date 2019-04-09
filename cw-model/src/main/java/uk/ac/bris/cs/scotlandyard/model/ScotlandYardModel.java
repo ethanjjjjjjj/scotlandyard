@@ -383,17 +383,16 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public void accept(Move m) {
+		requireNonNull(m);
 		if(this.validMoves().contains(m)){}
 		else{throw new IllegalArgumentException();}
 
-		requireNonNull(m);
+		
 		
 		
 		if (m instanceof TicketMove) {
 			
 			if(this.currentPlayer.colour()==BLACK)this.currentRound++;
-			
-
 			else{this.nextPlayer();}
 			TicketMove n = (TicketMove) m;
 			int newLocation = n.destination();
@@ -406,8 +405,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		// Remeber ticket has to be given to MrX
 		else if (m instanceof PassMove) {
 			this.nextPlayer();
-			
-
 		} else if (m instanceof DoubleMove) {
 			
 			DoubleMove n = (DoubleMove) m;
