@@ -195,7 +195,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public List<Colour> getPlayers() {
-		// TODO
+		
 		ArrayList<Colour> players= new ArrayList<>();
 		players.add(this.mrX.colour);
 		players.add(this.firstDetective.colour);
@@ -351,8 +351,77 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		return iGraph;
 	}
 
+
+	void nextPlayer(){
+
+
+		if(this.mutablePlayers.get(this.mutablePlayers.size()-1)==this.currentPlayer){
+			this.currentPlayer=this.mutablePlayers.get(0);
+		}
+		else{
+			this.currentPlayer=this.mutablePlayers.get(this.mutablePlayers.indexOf(this.currentPlayer)+1);
+		}
+
+
+	}
+
+
+
+
 	@Override
-	public void accept(Move arg0) {
+	public void accept(Move m) {
+
+
+		requireNonNull(m);
+		
+		
+		if (m instanceof TicketMove) {
+			
+			if(this.currentPlayer.colour()==BLACK){
+				
+				this.currentRound++;
+			}
+
+			else{this.nextPlayer();}
+			TicketMove n = (TicketMove) m;
+			int newLocation = n.destination();
+			Ticket theTicket = n.ticket();
+			this.currentPlayer.location(newLocation);
+			this.currentPlayer.removeTicket(theTicket);
+			
+			
+		}
+		// Remeber ticket has to be given to MrX
+		else if (m instanceof PassMove) {
+			this.nextPlayer();
+			
+
+		} else if (m instanceof DoubleMove) {
+			
+			DoubleMove n = (DoubleMove) m;
+			Ticket ticket1 = n.firstMove().ticket();
+			Ticket ticket2 = n.secondMove().ticket();
+			int newLocation = n.finalDestination();
+			
+			
+			this.currentPlayer.removeTicket(ticket1);
+			//this.roundIncrementer(m);
+			this.currentPlayer.removeTicket(ticket2);
+			//this.roundIncrementer(m);
+			this.currentPlayer.removeTicket(Ticket.DOUBLE);
+			this.currentPlayer.location(newLocation);
+			this.nextPlayer();
+			//this.spectatorMethods(m);
+		}
+
+		
+
+
+
+
+
+
+
 
 	}
 
