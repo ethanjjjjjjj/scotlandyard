@@ -22,55 +22,90 @@ import java.util.function.Consumer;
 import uk.ac.bris.cs.gamekit.graph.Edge;
 import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
-import uk.ac.bris.cs.scotlandyard.model.Ticket;
+import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.Node;
 
 // TODO implement all methods and pass all tests
-public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
-	private List<Boolean> rounds;
-	private Graph<Integer, Transport> graph;
-	private PlayerConfiguration mrX;
-	private PlayerConfiguration firstDetective;
-	private ArrayList<PlayerConfiguration> restOfTheDetectives;
-	private ArrayList<ScotlandYardPlayer> mutablePlayers;
-	//private int roundNumber = 0;
-	private ScotlandYardPlayer currentPlayer;
-	private ArrayList<Spectator> spectators;
+public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
+	List<Boolean> rounds;
+	Graph<Integer, Transport> graph;
+	PlayerConfiguration mrX;
+	PlayerConfiguration firstDetective;
+	PlayerConfiguration[] restOfTheDetectives;
+	ArrayList<Spectator> spectators;
+	int currentRound;
+	ArrayList<ScotlandYardPlayer> mutablePlayers;
+	ScotlandYardPlayer currentPlayer;
+	int mrXLastSeen;
+	ArrayList<PlayerConfiguration> playerConfigurations;
 
-	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph, PlayerConfiguration mrX,
-			PlayerConfiguration firstDetective, PlayerConfiguration... restOfTheDetectives) {
-		this.spectators = new ArrayList<>();
+
+	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
+			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
+			PlayerConfiguration... restOfTheDetectives) {
+				
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
-		this.firstDetective = requireNonNull(firstDetective);
-		this.mutablePlayers = new ArrayList<>();
-		this.restOfTheDetectives = new ArrayList<>(Arrays.asList(restOfTheDetectives));
+		
+		this.firstDetective=requireNonNull(firstDetective);
+		this.restOfTheDetectives=requireNonNull(restOfTheDetectives);
+		if (rounds.isEmpty()) {
+			throw new IllegalArgumentException("Empty rounds");
+		}
+
+		if (graph.isEmpty()) {
+			throw new IllegalArgumentException("Empty graph");
+		}
+
+		if (mrX.colour != BLACK) {
+			throw new IllegalArgumentException("MrX should be Black");
+		}
+	}
+
+
+
+
 		ArrayList<PlayerConfiguration> configurations = new ArrayList<>();
 
-		checkForEmpty(this.rounds, this.graph, this.mrX);
+		configurations.add(mrX);
+		configurations.add(firstDetective);
+		
 
-		// MrX, the first detective, and the rest of the detectives are added to one
-		// arraylist so it
-		// it easier to iterate over all of them at once.
-		for (PlayerConfiguration configuration : restOfTheDetectives) {
+		for (PlayerConfiguration configuration : restOfTheDetectives){
 			configurations.add(requireNonNull(configuration));
 		}
-		configurations.add(0, firstDetective);
-		configurations.add(0, mrX);
+		Set<Integer> set = new HashSet<>();//Checking there are not duplicate colours or locations
+		Set<Colour> setColour = new HashSet<>();
+		for (PlayerConfiguration configuration : configs) {
+			if (setLocation.contains(configuration.location)) {
+				throw new IllegalArgumentException("Duplicate location");
+			}
+			if (setColour.contains(configuration.colour)) {
+				throw new IllegalArgumentException("Duplicate colour");
+			}
+		set.add(configuration.location);
+		setColour.add(configuration.colour);
+		}	
 
-		// MrX is given it's own mutable class called ScotlandYardMrX. The detectives
-		// use ScotlandYardPlayer
-		this.mutablePlayers.add(new ScotlandYardMrX(mrX.player, mrX.colour, mrX.location, mrX.tickets));
-		for (PlayerConfiguration p : configurations.subList(1, configurations.size())) {
+
+
+
+		//creates a list of scotlandyardplayer objects that can me modified
+		this.mutablePlayers=new ArrayList<>();
+		for(PlayerConfiguration p:configurations){
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
-
+		this.mrXLastSeen=this.mutablePlayers.get(0).location();
+		this.currentPlayer=this.mutablePlayers.get(0);
+		this.playerConfigurations=configurations;
 		checkTickets(configurations);
 		checkLocations(configurations);
+		checkForEmpty(this.rounds, this.graph, this.mrX);
 
-		this.currentPlayer = mutablePlayers.get(0);
 	}
+
+
 
 	// Checking attribues are not empty
 	public void checkForEmpty(List<Boolean> rounds, Graph<Integer, Transport> graph, PlayerConfiguration mrX) {
@@ -86,6 +121,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			throw new IllegalArgumentException("MrX should be Black");
 		}
 	}
+
+
+
 
 	// Checking there are not duplicate colours or locations
 	public void checkLocations(ArrayList<PlayerConfiguration> configs) {
@@ -126,9 +164,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		}
 	}
 
+
 	@Override
 	public void registerSpectator(Spectator spectator) {
-
 		requireNonNull(spectator);
 		if (this.spectators.contains(spectator)) {
 			throw new IllegalArgumentException("same spectator added twice");
@@ -157,30 +195,27 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 	}
 
 	@Override
-	public void startRotate() {// TODO
-		//Creates a list of valid moves
+	public void startRotate() {
 		Set<Move> moves = validMoves();
-		System.out.println("THE CURRENT PLAYER IN START ROTATE  "+this.currentPlayer);
-		if (this.currentPlayer instanceof ScotlandYardMrX){
-			System.out.println("INSTANCE OF MR X");
-		}
-		
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
+
 	}
 
 	@Override
 	public Collection<Spectator> getSpectators() {
-
 		return Collections.unmodifiableList(this.spectators);
 	}
 
 	@Override
 	public List<Colour> getPlayers() {
-		ArrayList<Colour> playerColours = new ArrayList<>();
-		for (ScotlandYardPlayer p : this.mutablePlayers) {
-			playerColours.add(p.colour());
+		// TODO
+		ArrayList<Colour> players= new ArrayList<>();
+		players.add(this.mrX.colour);
+		players.add(this.firstDetective.colour);
+		for(PlayerConfiguration item : restOfTheDetectives){
+			players.add(item.colour);
 		}
-		return Collections.unmodifiableList(playerColours);
+		return Collections.unmodifiableList(players); 
 	}
 
 	@Override
@@ -226,9 +261,9 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			return Set.copyOf(detectiveWin);
 		}
 
-		ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
+		//ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
 		// checks whether the round limit has been reached
-		if (x.turnsPlayed() == getRounds().size()) {
+		if (getCurrentRound() == getRounds().size()) {
 			return Set.copyOf(mrXWin);
 		}
 
@@ -248,29 +283,50 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	}
 
+	ScotlandYardPlayer getMutablePlayer(Colour colour){
+		for(ScotlandYardPlayer item : this.mutablePlayers){
+			if(item.colour()==colour)return item;
+		}
+		throw new NullPointerException();
+	}
+	PlayerConfiguration getplayerConfiguration(Colour colour){
+		for(PlayerConfiguration item : this.playerConfigurations){
+			if(item.colour==colour)return item;
+		}
+		throw new NullPointerException();
+	}
+	
+
+	Boolean gamehasplayer(Colour colour){
+		for(ScotlandYardPlayer p: this.mutablePlayers){
+			if(p.colour()==colour)return true;
+		}
+		return false;
+	}
+
 	@Override
 	public Optional<Integer> getPlayerLocation(Colour colour) {
+		if(gamehasplayer(colour)){
 		if (colour != BLACK) {
-			for (ScotlandYardPlayer p : this.mutablePlayers) {
-				if (p.colour() == colour) {
-					return Optional.of(p.location());
-				}
+
+					return Optional.of(this.getMutablePlayer(colour).location());
+
+		} 
+		else{
+			for(int i=0;i<=this.getCurrentRound();i++){
+				if(this.rounds.get(i)){return Optional.of(this.mrXLastSeen);}
 			}
-		} else {
-			ScotlandYardMrX x = (ScotlandYardMrX) this.mutablePlayers.get(0);
-			return Optional.of(x.lastSeen());
-		}
-		return Optional.empty();
+			return Optional.of(0);
+		}}
+		else return Optional.empty();
 	}
 
 	@Override
 	public Optional<Integer> getPlayerTickets(Colour colour, Ticket ticket) {
-		for (ScotlandYardPlayer p : this.mutablePlayers) {
-			if (p.colour() == colour) {
-				return Optional.of(p.tickets().get(ticket));
-			}
+		if(gamehasplayer(colour)){
+			return Optional.of(this.getMutablePlayer(colour).tickets().get(ticket));
 		}
-		return Optional.empty();
+		else return Optional.empty();
 	}
 
 	@Override
@@ -294,9 +350,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 
 	@Override
 	public int getCurrentRound() {
-		ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
-		return x.turnsPlayed();
-		//return this.roundNumber;
+		return this.currentRound;
 	}
 
 	@Override
@@ -310,91 +364,26 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		return iGraph;
 	}
 
-	//When MrX plays, the round increments
-
-	//onRoundStarted must be called when round increments
-	private void spectatorMethods(){
-		System.out.println("CURRENT ROUND   " +this.getCurrentRound());
-		for (Spectator s : this.getSpectators()){
-			s.onRoundStarted(this, this.getCurrentRound());
-		}
-	}
-
-	//onMoveMade must be called after a move
-	private void spectatorMethods(Move m){
-		for(Spectator s : getSpectators()){
-			s.onMoveMade(this,m);
-		}
-	}
-	
-	//This changes the current player
-	private int nextPlayer(){
-		System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
-		int i = this.mutablePlayers.indexOf(this.currentPlayer);
-		System.out.println("PLAYER ARRAY I  "+i);
-		System.out.println("SIZE OF ARRAY  "+this.mutablePlayers.size());
-		//If the current player is the final one, then MrX is the next player
-		if (i == this.mutablePlayers.size() - 1){
-			this.currentPlayer = this.mutablePlayers.get(0);
-			for(Spectator s : getSpectators()){
-				s.onRotationComplete(this);
-			}
-			return -1;
-		}
-		//Else it's just the next player in the list
-		else{
-			this.currentPlayer = this.mutablePlayers.get(i+1);
-			return 1;
-		}
-		//System.out.println("THE CURRENT PLAYER  "+this.currentPlayer);
-	}
-
 	@Override
-	public void accept(Move m) {
-		requireNonNull(m);
-		
-		
-		if (m instanceof TicketMove) {
-			
-			if(this.currentPlayer instanceof ScotlandYardMrX){
-				
-				ScotlandYardMrX x = (ScotlandYardMrX) this.currentPlayer;
-				x.incTurnsPlayed();
-			}
-			else{this.nextPlayer();}
-			TicketMove n = (TicketMove) m;
-			int newLocation = n.destination();
-			Ticket theTicket = n.ticket();
-			this.currentPlayer.location(newLocation);
-			this.currentPlayer.removeTicket(theTicket);
-			
-			
-		}
-		// Remeber ticket has to be given to MrX
-		else if (m instanceof PassMove) {
+	public void accept(Move arg0) {
 
-		} else if (m instanceof DoubleMove) {
-			
-			DoubleMove n = (DoubleMove) m;
-			Ticket ticket1 = n.firstMove().ticket();
-			
-			
-			
-			Ticket ticket2 = n.secondMove().ticket();
-			int newLocation = n.finalDestination();
-			
-			
-			this.currentPlayer.removeTicket(ticket1);
-			//this.roundIncrementer(m);
-			this.currentPlayer.removeTicket(ticket2);
-			//this.roundIncrementer(m);
-			this.currentPlayer.removeTicket(Ticket.DOUBLE);
-			this.currentPlayer.location(newLocation);
-			this.nextPlayer();
-			this.spectatorMethods(m);
-		}
-
-		
 	}
+
+
+	private Set<Move> validMoves(){
+		Set<Move> moves = new HashSet<>();
+		ScotlandYardPlayer p = this.currentPlayer;
+		for (Edge<Integer, Transport> e : this.graph.getEdgesFrom(this.graph.getNode(p.location()))) {
+			if (p.hasTickets(Ticket.fromTransport(e.data()))) {
+				moves.add(new TicketMove(p.colour(), Ticket.fromTransport(e.data()), e.destination().value()));
+			}
+		}
+		return moves;
+	}
+
+
+
+
 }
+
 
