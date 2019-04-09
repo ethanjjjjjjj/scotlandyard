@@ -139,6 +139,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		this.spectators.remove(spectator);
 	}
 
+	//Checks there is no detective at a specified node for generating valid moves
 	private boolean freeSpaceAtNode(Edge<Integer,Transport> e){
 		for (ScotlandYardPlayer q : this.mutablePlayers.subList(1,this.mutablePlayers.size())){
 			if (q.location() == e.destination().value()){
@@ -148,8 +149,10 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		return true;
 	}
 
+	//Calls the other move generating methods and puts them in one set
 	private Set<Move> allValidMoves(){
 		Set<Move> singleMoves = validMoves();
+		//Only MrX can have double and secret moves;
 		if (this.getCurrentPlayerObject().isMrX()){
 			Set<Move> doubleMoves = doubleValidMoves();
 			singleMoves.addAll(doubleMoves);
@@ -157,6 +160,7 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 		return singleMoves;
 	}
 
+	//Generates a set of valid moves for all players.
 	private Set<Move> validMoves(){
 		Set<Move> moves = new HashSet<>();
 		ScotlandYardPlayer p = this.getCurrentPlayerObject();
@@ -164,17 +168,19 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 			if(p.hasTickets(Ticket.fromTransport(e.data())) && this.freeSpaceAtNode(e)){
 				moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));	
 			}
-
+			//Makes the single secret moves for MrX
 			if (p.isMrX() && p.hasTickets(SECRET) && this.freeSpaceAtNode(e)){
 				moves.add(new TicketMove(p.colour(),SECRET,e.destination().value()));
 			}
 		}
+		//If the detectives have no valid moves, they have to pass
 		if (moves.isEmpty()){
 			moves.add(new PassMove(p.colour()));
 		}
 		return moves;
 	}
 
+	//Generates double moves for MrX, a long with secret variations
 	private Set<Move> doubleValidMoves(){
 		Set<Move> moves = new HashSet<>();
 		ScotlandYardPlayer p = this.getCurrentPlayerObject();
@@ -185,17 +191,21 @@ public class ScotlandYardModel implements ScotlandYardGame, Consumer<Move> {
 				//Checks if MrX has enough tickets to perform a double move with transport tickets
 				for (Edge<Integer,Transport> f:this.graph.getEdgesFrom(this.graph.getNode(n.value()))){
 					Ticket s = Ticket.fromTransport(f.data());
+					//MrX must have 2 tranport tickets of the same type, or at least one of each for the transport. And the node must be free.
 					if(((t == s && p.hasTickets(t,2)) || (t != s && p.hasTickets(t) && p.hasTickets(s))) && freeSpaceAtNode(e) && freeSpaceAtNode(f)){
 						TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
 						TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
 						moves.add(new DoubleMove(p.colour(), ticket1, ticket2));								
 					}
+					//Secret variations genearted here
 					if(p.hasTickets(SECRET) && freeSpaceAtNode(e) && freeSpaceAtNode(f)){
 						TicketMove secret1 = new TicketMove(p.colour(),SECRET,e.destination().value());
 						TicketMove secret2 = new TicketMove(p.colour(),SECRET,f.destination().value());
+						//If MrX has 2 secret tickets they can do a double secret move
 						if (p.hasTickets(SECRET,2)){
 							moves.add(new DoubleMove(p.colour(), secret1, secret2));
 						}
+						//Secret moves for just one half of the double move
 						TicketMove ticket1 = new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value());
 						TicketMove ticket2 = new TicketMove(p.colour(),Ticket.fromTransport(f.data()),f.destination().value());
 						moves.add(new DoubleMove(p.colour(), ticket1, secret2));
