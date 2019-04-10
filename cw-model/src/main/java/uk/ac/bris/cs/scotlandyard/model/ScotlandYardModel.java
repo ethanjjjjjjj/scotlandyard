@@ -191,6 +191,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			s.onRoundStarted(this,this.currentRound);
 		}
 	}
+	private void spectatorsOnRotationComplete(){
+		for(Spectator s:this.spectators){
+			s.onRotationComplete(this);
+		}
+	}
 	@Override
 	public List<Colour> getPlayers() {
 		ArrayList<Colour> players= new ArrayList<>();
@@ -435,6 +440,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		this.nextPlayer();
 		if (this.currentPlayer.isDetective() && !this.isGameOver()){
 			this.startRotate();
+		}
+		else{
+			this.spectatorsOnRotationComplete();
 		}
 	}
 	private void editPlayerTickets(PassMove m){
