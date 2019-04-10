@@ -517,6 +517,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			Set<Move> doubleMoves = this.doubleValidMoves(p);
 			singleMoves.addAll(doubleMoves);
 		}
+		System.out.println(singleMoves);
 		return singleMoves;
 	}
 
