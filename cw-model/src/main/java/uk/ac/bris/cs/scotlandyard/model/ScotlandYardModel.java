@@ -166,6 +166,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 		//spectatorsOnRoundStarted();
 		Set<Move> moves = this.allValidMoves(this.currentPlayer);
+		
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
 
@@ -434,7 +435,10 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	private void editPlayerTickets(TicketMove m){
-		if(this.currentPlayer.colour().isMrX())this.currentRound++;
+		if(this.currentPlayer.colour().isMrX()){
+			this.currentRound++;
+			this.spectatorsOnRoundStarted();
+		}
 		int newLocation = m.destination();
 		Ticket theTicket = m.ticket();
 		this.currentPlayer.location(newLocation);
