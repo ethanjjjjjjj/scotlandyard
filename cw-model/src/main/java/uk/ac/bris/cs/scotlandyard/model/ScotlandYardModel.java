@@ -170,8 +170,20 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	private void spectatorsOnMoveMade(Move m){
+		Move n=m;
+		if(this.currentPlayer.isMrX() && this.rounds.get(this.currentRound)==false){
+			if(m instanceof DoubleMove){
+			DoubleMove oldmove = (DoubleMove) m;
+			n=new DoubleMove(BLACK, oldmove.firstMove().ticket(),0, oldmove.secondMove().ticket(),0);
+			}
+			else{
+				TicketMove oldmove=(TicketMove)m;
+				n=new TicketMove(BLACK,oldmove.ticket(),0);
+			}
+		}
+		System.out.println("move" +n.toString() );
 		for(Spectator s:this.spectators){
-			s.onMoveMade(this,m);
+			s.onMoveMade(this,n);
 		}
 	}
 	private void spectatorsOnRoundStarted(){
@@ -403,25 +415,31 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		m.visit(new MoveVisitor() {
 			@Override
 			public void visit(PassMove m) {
-				editPlayerTickets(m);
+				spectatorsOnMoveMade(m);
 			}
 			@Override
 			public void visit(TicketMove m) {
 				editPlayerTickets(m);
+				spectatorsOnMoveMade(m);
 			}
 			@Override
 			public void visit(DoubleMove m) {
 				System.out.println("INITIAL POSITION  " + currentPlayer.location());
 				System.out.println("CURRENT ROUND  " + currentRound);
+				spectatorsOnMoveMade(m);
 				TicketMove move1 = m.firstMove();
 				TicketMove move2 = m.secondMove();
 				editPlayerTickets(move1);
+				spectatorsOnMoveMade(move1);
 				System.out.println("FIRST TICKET MOVE  " + currentPlayer.location());
 				System.out.println("CURRENT ROUND  " + currentRound);
 				editPlayerTickets(move2);
+				spectatorsOnMoveMade(move2);
 				System.out.println("SECOND TICKET MOVE  " + currentPlayer.location());
 				System.out.println("CURRENT ROUND  " + currentRound);
 				currentPlayer.removeTicket(DOUBLE);
+				
+				
 			}
 		});
 
@@ -446,11 +464,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		
 		
 	}
-	private void editPlayerTickets(PassMove m){
 
-		spectatorsOnMoveMade(m);
 
-	}
+
 	private void editPlayerTickets(TicketMove m){
 		if(this.currentPlayer.colour().isMrX()){
 			this.currentRound++;
@@ -463,7 +479,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if (this.currentPlayer.isDetective()){
 			this.mutablePlayers.get(0).addTicket(theTicket);
 		}
-		this.spectatorsOnMoveMade(m);
+		
 		
 	}
 
