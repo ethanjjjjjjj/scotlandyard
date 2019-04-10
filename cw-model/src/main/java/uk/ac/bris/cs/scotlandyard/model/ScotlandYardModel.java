@@ -383,6 +383,10 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
+
+
+
+
 	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
@@ -394,7 +398,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		m.visit(new MoveVisitor() {
 			@Override
 			public void visit(PassMove m) {
-				
+				editPlayerTickets(m);
 			}
 			@Override
 			public void visit(TicketMove m) {
@@ -421,7 +425,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			this.startRotate();
 		}
 	}
+	private void editPlayerTickets(PassMove m){
 
+		spectatorsOnMoveMade(m);
+
+	}
 	private void editPlayerTickets(TicketMove m){
 		if(this.currentPlayer.colour().isMrX()){
 			this.currentRound++;
