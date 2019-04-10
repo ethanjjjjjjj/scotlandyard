@@ -259,7 +259,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 		//ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
 		// checks whether the round limit has been reached
-		if (getCurrentRound() == getRounds().size()) {
+		if ((this.currentPlayer.colour()==BLACK) &&  (getCurrentRound() == getRounds().size())) {
 			return Set.copyOf(mrXWin);
 		}
 
