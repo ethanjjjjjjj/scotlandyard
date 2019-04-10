@@ -162,6 +162,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if(this.isGameOver()){
 			throw new IllegalStateException("game is already over");
 		}
+
+
+		//spectatorsOnRoundStarted();
 		Set<Move> moves = this.allValidMoves(this.currentPlayer);
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
@@ -171,6 +174,22 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		return Collections.unmodifiableList(this.spectators);
 	}
 
+	private void spectatorsOnGameOver(){
+		for(Spectator s:this.spectators){
+			s.onGameOver(this,this.getWinningPlayers());
+		}
+	}
+
+	private void spectatorsOnMoveMade(Move m){
+		for(Spectator s:this.spectators){
+			s.onMoveMade(this,m);
+		}
+	}
+	private void spectatorsOnRoundStarted(){
+		for(Spectator s:this.spectators){
+			s.onRoundStarted(this,this.currentRound);
+		}
+	}
 	@Override
 	public List<Colour> getPlayers() {
 		ArrayList<Colour> players= new ArrayList<>();
@@ -195,10 +214,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 
 
-
-		if(this.allValidMoves(this.getMutablePlayer(BLACK)).size()==0){
+		System.out.println(this.allValidMoves(this.getMutablePlayer(BLACK)));
+		if(this.currentPlayer.colour()==BLACK && this.allValidMoves(this.getMutablePlayer(BLACK)).size()==1){
 			return Set.copyOf(detectiveWin);
 		}
+		
 		// checks whether any of the detectives are in the same location as mrX
 		ScotlandYardPlayer mrX = this.mutablePlayers.get(0);
 		for (ScotlandYardPlayer p : this.mutablePlayers.subList(1, this.mutablePlayers.size())) {
@@ -337,7 +357,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			return false;
 		} else {
 			for (Spectator s : this.spectators) {
-				s.onGameOver(this, this.getWinningPlayers());
+				//s.onGameOver(this, this.getWinningPlayers());
 			}
 			return true;
 		}
@@ -377,6 +397,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
+		
 		requireNonNull(m);
 		if(this.allValidMoves(this.currentPlayer).contains(m)){}
 		else{throw new IllegalArgumentException();}
@@ -384,6 +405,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		m.visit(new MoveVisitor() {
 			@Override
 			public void visit(PassMove m) {
+				
 			}
 			@Override
 			public void visit(TicketMove m) {
@@ -406,8 +428,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		});
 
 		this.nextPlayer();
-
-		if (this.currentPlayer.isDetective() && !(this.isGameOver())){
+		if (this.currentPlayer.isDetective() && !this.isGameOver()){
 			this.startRotate();
 		}
 	}
@@ -421,6 +442,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if (this.currentPlayer.isDetective()){
 			this.mutablePlayers.get(0).addTicket(theTicket);
 		}
+		this.spectatorsOnMoveMade(m);
+		
 	}
 
 	//Checks there is no detective at a specified node for generating valid moves
