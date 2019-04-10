@@ -426,12 +426,25 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		});
 
 		this.nextPlayer();
-		if (this.currentPlayer.isDetective() && !this.isGameOver()){
-			this.startRotate();
+		//isGameOver();
+		if(this.isGameOver()){
+			this.spectatorsOnGameOver();
 		}
-		else{
+		else if(this.currentPlayer.isMrX()){
 			this.spectatorsOnRotationComplete();
 		}
+		
+		else if (this.currentPlayer.isDetective()){
+			
+			
+				this.startRotate();
+				
+			
+			
+		}
+		
+		
+		
 	}
 	private void editPlayerTickets(PassMove m){
 
