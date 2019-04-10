@@ -202,7 +202,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 
 
-		System.out.println(this.allValidMoves(this.getMutablePlayer(BLACK)));
+		//System.out.println(this.allValidMoves(this.getMutablePlayer(BLACK)));
 		if(this.currentPlayer.colour()==BLACK && this.allValidMoves(this.getMutablePlayer(BLACK)).size()==1){
 			return Set.copyOf(detectiveWin);
 		}
