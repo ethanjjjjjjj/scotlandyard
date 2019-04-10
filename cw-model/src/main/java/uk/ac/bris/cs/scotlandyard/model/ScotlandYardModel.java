@@ -159,6 +159,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public void startRotate() {
+		if(this.isGameOver()){
+			throw new IllegalStateException("game is already over");
+		}
 		Set<Move> moves = this.allValidMoves(this.currentPlayer);
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
@@ -403,8 +406,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		});
 
 		this.nextPlayer();
-	
-		if (this.currentPlayer.isDetective()){
+
+		if (this.currentPlayer.isDetective() && !(this.isGameOver())){
 			this.startRotate();
 		}
 	}
