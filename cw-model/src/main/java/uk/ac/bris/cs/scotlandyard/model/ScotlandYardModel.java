@@ -34,6 +34,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	ArrayList<Spectator> spectators;
 	int currentRound;
 	ArrayList<ScotlandYardPlayer> mutablePlayers;
+	
 	ScotlandYardPlayer currentPlayer;
 	int mrXLastSeen;
 	ArrayList<PlayerConfiguration> playerConfigurations;
@@ -43,7 +44,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
 				this.spectators=new ArrayList<>();
-				
+
+
+// TODO implement all 
 		this.rounds = requireNonNull(rounds);
 		this.graph = requireNonNull(graph);
 		this.mrX = requireNonNull(mrX);
@@ -144,7 +147,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public void startRotate() {
-		Set<Move> moves = allValidMoves();
+		Set<Move> moves = this.allValidMoves(this.currentPlayer);
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
 
@@ -175,6 +178,12 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			detectiveWin.add(p.colour);
 		}
 
+
+
+
+		if(this.allValidMoves(this.getMutablePlayer(BLACK)).size()==0){
+			return Set.copyOf(detectiveWin);
+		}
 		// checks whether any of the detectives are in the same location as mrX
 		ScotlandYardPlayer mrX = this.mutablePlayers.get(0);
 		for (ScotlandYardPlayer p : this.mutablePlayers.subList(1, this.mutablePlayers.size())) {
@@ -205,6 +214,13 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if (samevalues == this.mutablePlayers.size()) {
 			return Set.copyOf(detectiveWin);
 		}
+		
+
+
+		if(this.allValidMoves(this.getMutablePlayer(BLACK)).size()==0){
+			return Set.copyOf(detectiveWin);
+		}
+
 
 		//ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
 		// checks whether the round limit has been reached
@@ -257,19 +273,20 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			if(this.currentRound==0){
 				return Optional.of(0);
 			}
+			
 			else if(this.rounds.get(currentRound - 1)){
 				this.mrXLastSeen=this.getMutablePlayer(colour).location();
 				this.oneRevealRound=true;
-				System.out.println(this.mrXLastSeen);
+				//System.out.println(this.mrXLastSeen);
 				return Optional.of(this.mrXLastSeen);
 			}
 			else{
 				if(this.oneRevealRound){
-					System.out.println(this.mrXLastSeen);
+					//System.out.println(this.mrXLastSeen);
 					return Optional.of(mrXLastSeen);
 				}
 				else{
-					System.out.println(0);
+					//System.out.println(0);
 					return Optional.of(0);
 				}
 
@@ -346,7 +363,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	@Override
 	public void accept(Move m) {
 		requireNonNull(m);
-		if(this.allValidMoves().contains(m)){}
+		if(this.allValidMoves(this.currentPlayer).contains(m)){}
 		else{throw new IllegalArgumentException();}
 
 		m.visit(new MoveVisitor() {
@@ -369,6 +386,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 				editPlayerTickets(move2);
 				System.out.println("SECOND TICKET MOVE  " + currentPlayer.location());
 				System.out.println("CURRENT ROUND  " + currentRound);
+				currentPlayer.removeTicket(DOUBLE);
 			}
 		});
 
@@ -401,20 +419,28 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	//Calls the other move generating methods and puts them in one set
-	private Set<Move> allValidMoves(){
-		Set<Move> singleMoves = validMoves();
+
+
+
+
+	private Set<Move> allValidMoves(ScotlandYardPlayer p){
+		Set<Move> singleMoves = this.validMoves(p);
 		//Only MrX can have double and secret moves;
-		if (this.getMutablePlayer(this.getCurrentPlayer()).isMrX()){
-			Set<Move> doubleMoves = doubleValidMoves();
+		if (p.isMrX()){
+			Set<Move> doubleMoves = this.doubleValidMoves(p);
 			singleMoves.addAll(doubleMoves);
 		}
 		return singleMoves;
 	}
 
 	//Generates a set of valid moves for all players.
-	private Set<Move> validMoves(){
+
+
+	
+
+	private Set<Move> validMoves(ScotlandYardPlayer p){
 		Set<Move> moves = new HashSet<>();
-		ScotlandYardPlayer p = this.getMutablePlayer(this.getCurrentPlayer());
+		//ScotlandYardPlayer p = this.getMutablePlayer(this.getCurrentPlayer());
 		for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 			if(p.hasTickets(Ticket.fromTransport(e.data())) && this.freeSpaceAtNode(e)){
 				moves.add(new TicketMove(p.colour(),Ticket.fromTransport(e.data()),e.destination().value()));	
@@ -432,9 +458,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	//Generates double moves for MrX, a long with secret variations
-	private Set<Move> doubleValidMoves(){
+	private Set<Move> doubleValidMoves(ScotlandYardPlayer p){
 		Set<Move> moves = new HashSet<>();
-		ScotlandYardPlayer p = this.getMutablePlayer(this.getCurrentPlayer());
+		//ScotlandYardPlayer p = this.getMutablePlayer(this.getCurrentPlayer());
 		if (p.hasTickets(DOUBLE) && this.currentRound <= this.rounds.size() - 2){
 			for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 				Node<Integer> n = e.destination();
