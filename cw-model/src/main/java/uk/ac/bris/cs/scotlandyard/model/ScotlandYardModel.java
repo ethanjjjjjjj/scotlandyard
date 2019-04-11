@@ -36,7 +36,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	int currentRound;
 	ArrayList<ScotlandYardPlayer> mutablePlayers;
 	ScotlandYardPlayer currentPlayer;
-	int mrXLastSeen;
+	int mrXLastSeen = 0;
 	ArrayList<PlayerConfiguration> playerConfigurations;
 	boolean oneRevealRound;
 
@@ -159,9 +159,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if(this.isGameOver()){
 			throw new IllegalStateException("game is already over");
 		}
-		//spectatorsOnRoundStarted();
 		Set<Move> moves = this.allValidMoves(this.currentPlayer);
-		
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
 
@@ -178,21 +176,43 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	private void spectatorsOnMoveMade(Move m){
 		Move n=m;
-		if(this.currentPlayer.isMrX() && this.rounds.get(this.currentRound)==false){
+		if(this.currentPlayer.isMrX()){
+		
 			if(m instanceof DoubleMove){
-			DoubleMove oldmove = (DoubleMove) m;
-			n=new DoubleMove(BLACK, oldmove.firstMove().ticket(),0, oldmove.secondMove().ticket(),0);
+				DoubleMove d = (DoubleMove)m;
+				int destinationOne;
+				int destinationTwo;
+				if(this.rounds.get(this.currentRound) == false){
+					destinationOne = this.mrXLastSeen;
+				}
+				else{
+					d = (DoubleMove)m;
+					destinationOne = d.firstMove().destination();
+				}
+				if(this.rounds.get(this.currentRound + 1) == false){
+					destinationTwo = destinationOne;
+				}
+				else{
+					d = (DoubleMove)m;
+					destinationTwo = d.secondMove().destination();
+				}
+				n = new DoubleMove(BLACK,d.firstMove().ticket(),destinationOne,d.secondMove().ticket(),destinationTwo);
 			}
 			else{
 				TicketMove oldmove=(TicketMove)m;
-				n=new TicketMove(BLACK,oldmove.ticket(),0);
+				if (this.rounds.get(this.currentRound - 1) == false){
+					n=new TicketMove(BLACK,oldmove.ticket(),this.mrXLastSeen);
+				}
+				else{
+					n=new TicketMove(BLACK,oldmove.ticket(),oldmove.destination());
+				}
 			}
 		}
-		System.out.println("move" +n.toString() );
 		for(Spectator s:this.spectators){
 			s.onMoveMade(this,n);
 		}
 	}
+
 	private void spectatorsOnRoundStarted(){
 		for(Spectator s:this.spectators){
 			s.onRoundStarted(this,this.currentRound);
@@ -225,7 +245,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			detectiveWin.add(p.colour);
 		}
 
-		//System.out.println(this.allValidMoves(this.getMutablePlayer(BLACK)));
 		if(this.currentPlayer.colour()==BLACK && this.allValidMoves(this.getMutablePlayer(BLACK)).size()==1){
 			return Set.copyOf(detectiveWin);
 		}
@@ -266,7 +285,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			return Set.copyOf(detectiveWin);
 		}
 
-		//ScotlandYardMrX x = (ScotlandYardMrX)this.mutablePlayers.get(0);
 		// checks whether the round limit has been reached
 		if ((this.currentPlayer.colour()==BLACK) &&  (getCurrentRound() == getRounds().size())) {
 			return Set.copyOf(mrXWin);
@@ -293,6 +311,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		throw new NullPointerException();
 	}
+
+
 	PlayerConfiguration getplayerConfiguration(Colour colour){
 		for(PlayerConfiguration item : this.playerConfigurations){
 			if(item.colour==colour)return item;
@@ -408,19 +428,13 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			}
 			@Override
 			public void visit(DoubleMove m) {
-				System.out.println("INITIAL POSITION  " + currentPlayer.location());
-				System.out.println("CURRENT ROUND  " + currentRound);
 				spectatorsOnMoveMade(m);
 				TicketMove move1 = m.firstMove();
 				TicketMove move2 = m.secondMove();
 				editPlayerTickets(move1);
 				spectatorsOnMoveMade(move1);
-				System.out.println("FIRST TICKET MOVE  " + currentPlayer.location());
-				System.out.println("CURRENT ROUND  " + currentRound);
 				editPlayerTickets(move2);
 				spectatorsOnMoveMade(move2);
-				System.out.println("SECOND TICKET MOVE  " + currentPlayer.location());
-				System.out.println("CURRENT ROUND  " + currentRound);
 				currentPlayer.removeTicket(DOUBLE);
 				
 				
@@ -454,6 +468,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if (this.currentPlayer.isDetective()){
 			this.mutablePlayers.get(0).addTicket(theTicket);
 		}
+		if (this.currentPlayer.isMrX()){
+			if(this.rounds.get(this.currentRound - 1)){
+				this.mrXLastSeen = newLocation;
+			}
+		}
 	}
 
 	//Checks there is no detective at a specified node for generating valid moves
@@ -474,7 +493,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			Set<Move> doubleMoves = this.doubleValidMoves(p);
 			singleMoves.addAll(doubleMoves);
 		}
-		System.out.println(singleMoves);
 		return singleMoves;
 	}
 
