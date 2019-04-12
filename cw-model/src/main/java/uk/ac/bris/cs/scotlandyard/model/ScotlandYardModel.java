@@ -163,42 +163,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	private void spectatorsOnMoveMade(Move m){
-		Move n=m;
-		if(this.currentPlayer.isMrX()){
 		
-			if(m instanceof DoubleMove){
-				DoubleMove d = (DoubleMove)m;
-				int destinationOne;
-				int destinationTwo;
-				if(this.rounds.get(this.currentRound) == false){
-					destinationOne = this.mrXLastSeen;
-				}
-				else{
-					d = (DoubleMove)m;
-					destinationOne = d.firstMove().destination();
-				}
-				if(this.rounds.get(this.currentRound + 1) == false){
-					destinationTwo = destinationOne;
-				}
-				else{
-					d = (DoubleMove)m;
-					destinationTwo = d.secondMove().destination();
-				}
-				n = new DoubleMove(BLACK,d.firstMove().ticket(),destinationOne,d.secondMove().ticket(),destinationTwo);
-			}
-			else{
-				TicketMove oldmove=(TicketMove)m;
-				if (this.rounds.get(this.currentRound - 1) == false){
-					n=new TicketMove(BLACK,oldmove.ticket(),this.mrXLastSeen);
-				}
-				else{
-					n=new TicketMove(BLACK,oldmove.ticket(),oldmove.destination());
-				}
-			}
-		}
-		for(Spectator s:this.spectators){
-			s.onMoveMade(this,n);
-		}
 	}
 
 	private void spectatorsOnRoundStarted(){
@@ -415,26 +380,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			public void visit(TicketMove m) {
 				editPlayerTickets(m);
 				spectatorsOnMoveMade(m);
-				System.out.println("JUST PLAYED  "+currentPlayer.colour());
 				nextPlayer();
-				System.out.println("NEXT PLAYER  "+currentPlayer.colour());
 			}
 			@Override
 			public void visit(DoubleMove m) {
-				System.out.println("DOUBLE MOVE START  "+currentPlayer.colour());
-				nextPlayer();
-				System.out.println("DOUBLE MOVE NEXT PLAYER  "+currentPlayer.colour());
-				spectatorsOnMoveMade(m);
-				TicketMove move1 = m.firstMove();
-				TicketMove move2 = m.secondMove();
-				editMrX(move1);
-				//editPlayerTickets(move1);
-				spectatorsOnMoveMade(move1);
 
-				editMrX(move2);
-				//editPlayerTickets(move2);
-				spectatorsOnMoveMade(move2);
-				currentPlayer.removeTicket(DOUBLE);
 			}
 		});
 		//isGameOver();
@@ -450,17 +400,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
-	private void editMrX(TicketMove m ){
-		this.currentRound++;
-		this.spectatorsOnRoundStarted();
-		int newLocation = m.destination();
-		Ticket theTicket = m.ticket();
-		this.mutablePlayers.get(0).location(newLocation);
-		this.mutablePlayers.get(0).removeTicket(theTicket);
-		if(this.rounds.get(this.currentRound - 1)){
-			this.mrXLastSeen = newLocation;
-		}
-	}
+	
 
 	private void editPlayerTickets(TicketMove m){
 		if(this.currentPlayer.colour().isMrX()){
