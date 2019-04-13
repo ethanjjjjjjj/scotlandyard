@@ -185,7 +185,10 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			int destinationTwo;
 
 			//If it is a reveal round, the first ticket shows the location
+			System.out.println(this.getPlayers());
+			System.out.println("current round: "+String.valueOf(this.currentRound)+" maximum rounds: "+String.valueOf(this.rounds.size()));
 			if(this.rounds.get(this.currentRound)){
+				System.out.println("firstmove");
 				destinationOne = n.firstMove().destination();
 			}
 
@@ -197,6 +200,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			//Same thing for second ticket and next round, as a double move takes 2 rounds
 			
 			if(this.rounds.get(this.currentRound+1)){
+				System.out.println("secondmove");
 				destinationTwo = n.secondMove().destination();
 			}
 
@@ -353,6 +357,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public Optional<Integer> getPlayerLocation(Colour colour) {
+		System.out.println(this.getPlayers());
+		System.out.println("current round: "+String.valueOf(this.currentRound)+" maximum rounds: "+String.valueOf(this.rounds.size()));
 		if(!(this.gamehasplayer(colour))){
 			return Optional.empty();
 		}
@@ -439,9 +445,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
-		System.out.println(currentPlayer.location());
-		System.out.println("move:");
-		System.out.println(m);
 		requireNonNull(m);
 		if(this.allValidMoves(this.currentPlayer).contains(m)){}
 		else{throw new IllegalArgumentException();}
@@ -471,10 +474,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 				MrXTicketOnMoveMadeInDoubleMove(move1);
 				editMrXTicketsForDoubleMove(move2);
 				MrXTicketOnMoveMadeInDoubleMove(move2);
-				
 			}
 		});
-		
+		System.out.println(this.getPlayers());
 		System.out.println(currentPlayer.location());
 		if(this.isGameOver()){
 			this.spectatorsOnGameOver();
@@ -506,13 +508,19 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	private void editPlayerTickets(TicketMove m){
 		if(this.currentPlayer.colour().isMrX()){
+			
 			this.currentRound++;
+			
 			this.spectatorsOnRoundStarted();
+			System.out.println(this.getPlayers());
+			System.out.println("current round: "+String.valueOf(this.currentRound)+" maximum rounds: "+String.valueOf(this.rounds.size()));
 		}
 		int newLocation = m.destination();
 		Ticket theTicket = m.ticket();
 		this.currentPlayer.location(newLocation);
 		this.currentPlayer.removeTicket(theTicket);
+		System.out.println(this.getPlayers());
+		System.out.println("current round: "+String.valueOf(this.currentRound)+" maximum rounds: "+String.valueOf(this.rounds.size()));
 		if (this.currentPlayer.isDetective()){
 			this.mutablePlayers.get(0).addTicket(theTicket);
 		}
@@ -566,7 +574,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	private Set<Move> doubleValidMoves(ScotlandYardPlayer p){
 		Set<Move> moves = new HashSet<>();
 		//ScotlandYardPlayer p = this.getMutablePlayer(this.getCurrentPlayer());
-		if (p.hasTickets(DOUBLE) && this.currentRound <= this.rounds.size() - 2){
+		if (p.hasTickets(DOUBLE) && this.currentRound <= (this.rounds.size() - 2)){
 			for(Edge<Integer,Transport> e:this.graph.getEdgesFrom(this.graph.getNode(p.location()))){
 				Node<Integer> n = e.destination();
 				Ticket t = Ticket.fromTransport(e.data());
