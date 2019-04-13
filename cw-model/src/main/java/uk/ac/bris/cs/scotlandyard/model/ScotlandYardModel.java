@@ -195,6 +195,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			}
 
 			//Same thing for second ticket and next round, as a double move takes 2 rounds
+			
 			if(this.rounds.get(this.currentRound+1)){
 				destinationTwo = n.secondMove().destination();
 			}
@@ -202,6 +203,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			else{
 				destinationTwo = destinationOne;
 			}
+			
+
+			
 
 			move1 = new TicketMove(BLACK,n.firstMove().ticket(),destinationOne);
 			move2 = new TicketMove(BLACK,n.secondMove().ticket(),destinationTwo);
@@ -220,7 +224,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	//Spectator single tickets for MrX, because of his last seen mechanic
 	private void MrXTicketOnMoveMadeInDoubleMove(TicketMove m){
 		TicketMove t;
-		if (this.rounds.get(this.currentRound - 1)){
+		if (this.rounds.get(this.currentRound -1)){
 			t = new TicketMove(BLACK,m.ticket(),m.destination());
 		}
 		else{
@@ -414,6 +418,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 
 	void nextPlayer(){
+
+		
 		if(this.mutablePlayers.get((this.mutablePlayers.size())-1)==this.currentPlayer){
 			this.currentPlayer=this.mutablePlayers.get(0);
 		}
@@ -421,12 +427,19 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			this.currentPlayer=this.mutablePlayers.get(this.mutablePlayers.indexOf(this.currentPlayer)+1);
 		}
 	}
-
+	boolean hasnotickets(ScotlandYardPlayer p){
+		if(p.tickets().get(Ticket.TAXI)==0 && p.tickets().get(Ticket.UNDERGROUND)==0 && p.tickets().get(Ticket.BUS)==0 && p.tickets().get(Ticket.DOUBLE)==0 && p.tickets().get(Ticket.SECRET)==0){
+			return true;
+		}
+		else return false;
+	}
 
 	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
-		
+		System.out.println(currentPlayer.location());
+		System.out.println("move:");
+		System.out.println(m);
 		requireNonNull(m);
 		if(this.allValidMoves(this.currentPlayer).contains(m)){}
 		else{throw new IllegalArgumentException();}
@@ -447,6 +460,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			@Override
 			public void visit(DoubleMove m) {
 				nextPlayer();
+				mutablePlayers.get(0).removeTicket(DOUBLE);
 				spectatorsOnMoveMade(m);
 				TicketMove move1 = m.firstMove();
 				TicketMove move2 = m.secondMove();
@@ -454,11 +468,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 				MrXTicketOnMoveMadeInDoubleMove(move1);
 				editMrXTicketsForDoubleMove(move2);
 				MrXTicketOnMoveMadeInDoubleMove(move2);
-				mutablePlayers.get(0).removeTicket(DOUBLE);
+				
 			}
 		});
 		
-		
+		System.out.println(currentPlayer.location());
 		if(this.isGameOver()){
 			this.spectatorsOnGameOver();
 		}
@@ -469,15 +483,17 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		else if (this.currentPlayer.isDetective()){
 			this.startRotate();	
 		}
+	
 	}
 
 	private void editMrXTicketsForDoubleMove(TicketMove m){
 		this.currentRound++;
-		this.spectatorsOnRoundStarted();
+		
 		int newLocation = m.destination();
 		Ticket theTicket = m.ticket();
 		this.mutablePlayers.get(0).location(newLocation);
 		this.mutablePlayers.get(0).removeTicket(theTicket);
+		this.spectatorsOnRoundStarted();
 		if (this.rounds.get(this.currentRound - 1)){
 			this.mrXLastSeen = newLocation;
 		}
