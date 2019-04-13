@@ -416,10 +416,12 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 	boolean hasnotickets(ScotlandYardPlayer p){
-		if(p.tickets().get(Ticket.TAXI)==0 && p.tickets().get(Ticket.UNDERGROUND)==0 && p.tickets().get(Ticket.BUS)==0 && p.tickets().get(Ticket.DOUBLE)==0 && p.tickets().get(Ticket.SECRET)==0){
+		if(this.allValidMoves(p).size()==1){
 			return true;
 		}
-		else return false;
+		else{
+			return false;
+		}
 	}
 
 	//The accept method from the consumer
@@ -435,8 +437,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		m.visit(new MoveVisitor() {
 			@Override
 			public void visit(PassMove m) {
-				spectatorsOnMoveMade(m);
 				nextPlayer();
+				spectatorsOnMoveMade(m);
+				
 			}
 			@Override
 			public void visit(TicketMove m) {
@@ -481,10 +484,11 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		Ticket theTicket = m.ticket();
 		this.mutablePlayers.get(0).location(newLocation);
 		this.mutablePlayers.get(0).removeTicket(theTicket);
-		this.spectatorsOnRoundStarted();
+		
 		if (this.rounds.get(this.currentRound - 1)){
 			this.mrXLastSeen = newLocation;
 		}
+		this.spectatorsOnRoundStarted();
 	}
 	
 
