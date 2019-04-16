@@ -25,7 +25,6 @@ import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
 import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.Node;
 
-// TODO implement all methods and pass all tests
 public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	List<Boolean> rounds;
 	Graph<Integer, Transport> graph;
@@ -174,7 +173,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
-	private void spectatorsOnMoveMade(Move m){
+	private void spectatorsOnMoveMade(Move m, ScotlandYardPlayer p){
 
 		//The spectators must see the double move ticket
 		if (m instanceof DoubleMove){
@@ -207,9 +206,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			else{
 				destinationTwo = destinationOne;
 			}
-			
-
-			
 
 			move1 = new TicketMove(BLACK,n.firstMove().ticket(),destinationOne);
 			move2 = new TicketMove(BLACK,n.secondMove().ticket(),destinationTwo);
@@ -220,8 +216,23 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			return;
 		}
 
-		for (Spectator s : this.spectators){
-			s.onMoveMade(this, m);
+		if (p.isMrX()){
+			TicketMove t;
+			TicketMove n = (TicketMove)m;
+			if (this.rounds.get(this.currentRound - 1)){
+				t = new TicketMove(BLACK,n.ticket(),n.destination());
+			}
+			else{
+				t= new TicketMove(BLACK,n.ticket(),this.mrXLastSeen);
+			}
+			for (Spectator s : this.spectators){
+				s.onMoveMade(this, t);
+			}
+		}
+		else{
+			for (Spectator s : this.spectators){
+				s.onMoveMade(this, m);
+			}
 		}
 	}
 
@@ -452,22 +463,25 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		m.visit(new MoveVisitor() {
 			@Override
 			public void visit(PassMove m) {
+				ScotlandYardPlayer p = getMutablePlayer(currentPlayer.colour());
 				nextPlayer();
-				spectatorsOnMoveMade(m);
+				spectatorsOnMoveMade(m,p);
 				
 			}
 			@Override
 			public void visit(TicketMove m) {
-				editPlayerTickets(m);
+				ScotlandYardPlayer p = getMutablePlayer(currentPlayer.colour());
 				nextPlayer();
-				spectatorsOnMoveMade(m);
+				prepareNextRound(m,p);
+				spectatorsOnMoveMade(m,p);
 				
 			}
 			@Override
 			public void visit(DoubleMove m) {
+				ScotlandYardPlayer p = getMutablePlayer(currentPlayer.colour());
 				nextPlayer();
 				mutablePlayers.get(0).removeTicket(DOUBLE);
-				spectatorsOnMoveMade(m);
+				spectatorsOnMoveMade(m,p);
 				TicketMove move1 = m.firstMove();
 				TicketMove move2 = m.secondMove();
 				editMrXTicketsForDoubleMove(move1);
@@ -505,8 +519,33 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		this.spectatorsOnRoundStarted();
 	}
 	
+	private void prepareNextRound(TicketMove m, ScotlandYardPlayer p){
+		if(p.isMrX()){
+			this.currentRound++;
+			this.editPlayerTickets(m, p);
+			this.spectatorsOnRoundStarted();
+		}
+		else{
+			this.editPlayerTickets(m,p);
+		}
+		
+	}
 
-	private void editPlayerTickets(TicketMove m){
+	private void editPlayerTickets(TicketMove m, ScotlandYardPlayer p){
+		int newLocation = m.destination();
+		Ticket theTicket = m.ticket();
+		p.location(newLocation);
+		p.removeTicket(theTicket);
+		if (p.isDetective()){
+			this.mutablePlayers.get(0).addTicket(theTicket);
+		}
+		if (p.isMrX() && this.rounds.get(this.currentRound - 1)){
+			this.mrXLastSeen = newLocation;
+		}
+
+	}
+
+	/*private void editPlayerTickets(TicketMove m){
 		if(this.currentPlayer.colour().isMrX()){
 			
 			this.currentRound++;
@@ -527,7 +566,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if (this.currentPlayer.isMrX() && this.rounds.get(this.currentRound - 1)){
 			this.mrXLastSeen = newLocation;
 		}
-	}
+	}*/
 
 	//Checks there is no detective at a specified node for generating valid moves
 	private boolean freeSpaceAtNode(Edge<Integer,Transport> e){
