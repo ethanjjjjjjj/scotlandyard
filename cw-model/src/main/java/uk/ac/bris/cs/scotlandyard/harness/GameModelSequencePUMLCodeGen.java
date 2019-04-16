@@ -100,7 +100,7 @@ public class GameModelSequencePUMLCodeGen implements CodeGen {
 			private Colour previousPlayer(ImmutableScotlandYardView view) {
 				int index = view.getPlayers().indexOf(view.getCurrentPlayer());
 				if (index < 0) throw new AssertionError();
-				if (index == 0) return view.getPlayers().get(view.getPlayers().size());
+				if (index == 0) return view.getPlayers().get(view.getPlayers().size() - 1);
 				return view.getPlayers().get(index - 1);
 			}
 		};
