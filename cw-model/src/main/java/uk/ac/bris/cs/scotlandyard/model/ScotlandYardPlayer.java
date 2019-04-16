@@ -138,11 +138,7 @@ public class ScotlandYardPlayer implements Player{
 	}
 
 
-	//@Override
-	public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
-		
-		this.player.makeMove(view, location, moves, callback);
-	}
+
 
 	@Override
 	public String toString() {
