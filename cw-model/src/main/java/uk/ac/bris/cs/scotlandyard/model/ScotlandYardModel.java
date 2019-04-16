@@ -28,7 +28,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	ScotlandYardPlayer currentPlayer;
 	int mrXLastSeen = 0;
 	ArrayList<PlayerConfiguration> playerConfigurations;
-	boolean oneRevealRound;
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
 			PlayerConfiguration mrX, PlayerConfiguration firstDetective,
 			PlayerConfiguration... restOfTheDetectives) {
@@ -51,24 +50,15 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		this.currentPlayer=this.mutablePlayers.get(0);
 		this.playerConfigurations=configurations;
-		this.oneRevealRound=false;
 		this.checkTickets(configurations);
 		this.checkLocations(configurations);
 		this.checkForEmpty(this.rounds, this.graph, this.mrX);
 	}
 	// Checking attribues are not empty
 	private void checkForEmpty(List<Boolean> rounds, Graph<Integer, Transport> graph, PlayerConfiguration mrX) {
-		if (rounds.isEmpty()) {
-			throw new IllegalArgumentException("Empty rounds");
-		}
-
-		if (graph.isEmpty()) {
-			throw new IllegalArgumentException("Empty graph");
-		}
-
-		if (mrX.colour != BLACK) {
-			throw new IllegalArgumentException("MrX should be Black");
-		}
+		if (rounds.isEmpty()) throw new IllegalArgumentException("Empty rounds");
+		if (graph.isEmpty()) throw new IllegalArgumentException("Empty graph");
+		if (mrX.colour != BLACK) throw new IllegalArgumentException("MrX should be Black");
 	}
 
 	// Checking there are not duplicate colours or locations
@@ -331,13 +321,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 	@Override
 	public boolean isGameOver() {
-		if (this.getWinningPlayers().isEmpty()) {
-			return false;
-		} else {
-			for (Spectator s : this.spectators) {
-			}
-			return true;
-		}}
+		if (this.getWinningPlayers().isEmpty()) return false;
+		else return true;
+		}
 	@Override
 	public Colour getCurrentPlayer() {
 		return this.currentPlayer.colour();
