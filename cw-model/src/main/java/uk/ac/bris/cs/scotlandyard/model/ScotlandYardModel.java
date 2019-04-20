@@ -120,9 +120,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 
 	@Override
 	public void startRotate() {
-		if(this.isGameOver()){
-			throw new IllegalStateException("game is already over");
-		}
+		if(this.isGameOver()) throw new IllegalStateException("game is already over");
 		Set<Move> moves = this.allValidMoves(this.currentPlayer);
 		this.currentPlayer.makeMove(this, this.currentPlayer.location(), moves, this);	
 	}
@@ -139,7 +137,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 	private void spectatorsOnMoveMade(Move m, ScotlandYardPlayer p){
-
 		//The spectators must see the double move ticket
 		if (m instanceof DoubleMove){
 			DoubleMove n = (DoubleMove)m;
@@ -162,12 +159,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		if (p.isMrX()){
 			TicketMove t;
 			TicketMove n = (TicketMove)m;
-			if (this.rounds.get(this.currentRound - 1)){
-				t = new TicketMove(BLACK,n.ticket(),n.destination());
-			}
-			else{
-				t= new TicketMove(BLACK,n.ticket(),this.mrXLastSeen);
-			}
+			if (this.rounds.get(this.currentRound - 1)) t = new TicketMove(BLACK,n.ticket(),n.destination());
+			else t = new TicketMove(BLACK,n.ticket(),this.mrXLastSeen);
 			for (Spectator s : this.spectators){
 				s.onMoveMade(this, t);
 			}
@@ -179,29 +172,18 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
-	//Spectator single tickets for MrX, because of his last seen mechanic
-	private void MrXTicketOnMoveMadeInDoubleMove(TicketMove m){
-		TicketMove t;
-		if (this.rounds.get(this.currentRound -1)){
-			t = new TicketMove(BLACK,m.ticket(),m.destination());
-		}
-		else{
-			t= new TicketMove(BLACK,m.ticket(),this.mrXLastSeen);
-		}
-		for (Spectator s : this.spectators){
-			s.onMoveMade(this, t);
-		}
-	}
 	private void spectatorsOnRoundStarted(){
 		for(Spectator s:this.spectators){
 			s.onRoundStarted(this,this.currentRound);
 		}
 	}
+
 	private void spectatorsOnRotationComplete(){
 		for(Spectator s:this.spectators){
 			s.onRotationComplete(this);
 		}
 	}
+
 	@Override
 	public List<Colour> getPlayers() {
 		ArrayList<Colour> players= new ArrayList<>();
@@ -212,6 +194,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		return Collections.unmodifiableList(players); 
 	}
+
 	@Override
 	public Set<Colour> getWinningPlayers() {
 		ArrayList<Colour> mrXWin = new ArrayList<>();
@@ -247,7 +230,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			if (nodeValues.contains(p.location())) {
 				samevalues++;
 			}
-			;
 		}
 		if (samevalues == this.mutablePlayers.size()) {
 			return Set.copyOf(detectiveWin);
@@ -271,14 +253,15 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			}
 		}
 		return Set.copyOf(mrXWin);
-
 	}
+
 	ScotlandYardPlayer getMutablePlayer(Colour colour){
 		for(ScotlandYardPlayer item : this.mutablePlayers){
 			if(item.colour()==colour)return item;
 		}
 		throw new NullPointerException();
 	}
+
 	PlayerConfiguration getplayerConfiguration(Colour colour){
 		for(PlayerConfiguration item : this.playerConfigurations){
 			if(item.colour==colour)return item;
@@ -312,6 +295,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			return Optional.of(this.getMutablePlayer(colour).location());
 		}
 	}
+
 	@Override
 	public Optional<Integer> getPlayerTickets(Colour colour, Ticket ticket) {
 		if(gamehasplayer(colour)){
@@ -319,28 +303,34 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		else return Optional.empty();
 	}
+
 	@Override
 	public boolean isGameOver() {
 		if (this.getWinningPlayers().isEmpty()) return false;
 		else return true;
-		}
+	}
+
 	@Override
 	public Colour getCurrentPlayer() {
 		return this.currentPlayer.colour();
 	}
+
 	@Override
 	public int getCurrentRound() {
 		return this.currentRound;
 	}
+
 	@Override
 	public List<Boolean> getRounds() {
 		return Collections.unmodifiableList(rounds);
 	}
+
 	@Override
 	public Graph<Integer, Transport> getGraph() {
 		ImmutableGraph<Integer, Transport> iGraph = new ImmutableGraph<>(graph);
 		return iGraph;
 	}
+
 	void nextPlayer(){
 		if(this.mutablePlayers.get((this.mutablePlayers.size())-1)==this.currentPlayer){
 			this.currentPlayer=this.mutablePlayers.get(0);
@@ -349,16 +339,19 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			this.currentPlayer=this.mutablePlayers.get(this.mutablePlayers.indexOf(this.currentPlayer)+1);
 		}
 	}
+
+	//Can we remove this? It's not used anyehere
 	boolean hasnotickets(ScotlandYardPlayer p){
 		if(this.allValidMoves(p).size()==1) return true;
 		else return false;
 	}
+
 	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
 		requireNonNull(m);
-		if(this.allValidMoves(this.currentPlayer).contains(m)){}
-		else{throw new IllegalArgumentException();}
+		if(!this.allValidMoves(this.currentPlayer).contains(m))throw new IllegalArgumentException();
+		else{
 		m.visit(new MoveVisitor() {
 			@Override
 			public void visit(PassMove m) {
@@ -366,12 +359,15 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 				nextPlayer();
 				spectatorsOnMoveMade(m,p);
 			}
+
 			@Override
 			public void visit(TicketMove m) {
 				ScotlandYardPlayer p = getMutablePlayer(currentPlayer.colour());
 				nextPlayer();
 				prepareNextRound(m,p);
-				spectatorsOnMoveMade(m,p);			}
+				spectatorsOnMoveMade(m,p);			
+			}
+
 			@Override
 			public void visit(DoubleMove m) {
 				ScotlandYardPlayer p = getMutablePlayer(currentPlayer.colour());
@@ -380,14 +376,16 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 				spectatorsOnMoveMade(m,p);
 				TicketMove move1 = m.firstMove();
 				TicketMove move2 = m.secondMove();
-				editMrXTicketsForDoubleMove(move1);   MrXTicketOnMoveMadeInDoubleMove(move1);
-				editMrXTicketsForDoubleMove(move2);   MrXTicketOnMoveMadeInDoubleMove(move2);
+				editMrXTicketsForDoubleMove(move1);   spectatorsOnMoveMade(move1,p);
+				editMrXTicketsForDoubleMove(move2);   spectatorsOnMoveMade(move2,p);
 			}});
-		if(this.isGameOver()) this.spectatorsOnGameOver();
-		else if(this.currentPlayer.isMrX())	this.spectatorsOnRotationComplete();
+		if (this.isGameOver()) this.spectatorsOnGameOver();
+		else if (this.currentPlayer.isMrX()) this.spectatorsOnRotationComplete();
 		else if (this.currentPlayer.isDetective()) this.startRotate();
-	}
+	}}
 
+
+	//Possibly merge this method with the other editPlayerTickets one?
 	private void editMrXTicketsForDoubleMove(TicketMove m){
 		this.currentRound++;
 		int newLocation = m.destination();
