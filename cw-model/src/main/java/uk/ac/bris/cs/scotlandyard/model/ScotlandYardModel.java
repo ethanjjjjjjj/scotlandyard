@@ -340,12 +340,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 	}
 
-	//Can we remove this? It's not used anyehere
-	boolean hasnotickets(ScotlandYardPlayer p){
-		if(this.allValidMoves(p).size()==1) return true;
-		else return false;
-	}
-
 	//The accept method from the consumer
 	@Override
 	public void accept(Move m) {
