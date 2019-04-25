@@ -334,7 +334,8 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		return iGraph;
 	}
 
-	void nextPlayer(){
+	//Changes the current player of the model
+	public void nextPlayer(){
 		if(this.mutablePlayers.get((this.mutablePlayers.size())-1)==this.currentPlayer){
 			this.currentPlayer=this.mutablePlayers.get(0);
 		}
@@ -358,7 +359,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	}
 
 
-	//Possibly merge this method with the other editPlayerTickets one?
 	public void editMrXTicketsForDoubleMove(TicketMove m){
 		this.currentRound++;
 		int newLocation = m.destination();
