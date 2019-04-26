@@ -17,17 +17,17 @@ import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
 import uk.ac.bris.cs.gamekit.graph.Node;
 public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
-	List<Boolean> rounds;
-	Graph<Integer, Transport> graph;
-	PlayerConfiguration mrX;
-	PlayerConfiguration firstDetective;
-	PlayerConfiguration[] restOfTheDetectives;
-	ArrayList<Spectator> spectators;
-	int currentRound;
-	ArrayList<ScotlandYardPlayer> mutablePlayers;
-	ScotlandYardPlayer currentPlayer;
-	int mrXLastSeen = 0;
-	ArrayList<PlayerConfiguration> playerConfigurations;
+	private List<Boolean> rounds;
+	private Graph<Integer, Transport> graph;
+	private PlayerConfiguration mrX;
+	private PlayerConfiguration firstDetective;
+	private PlayerConfiguration[] restOfTheDetectives;
+	private ArrayList<Spectator> spectators;
+	private int currentRound;
+	private ArrayList<ScotlandYardPlayer> mutablePlayers;
+	private ScotlandYardPlayer currentPlayer;
+	private int mrXLastSeen = 0;
+	private ArrayList<PlayerConfiguration> playerConfigurations;
 
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
@@ -265,14 +265,14 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		throw new NullPointerException();
 	}
 
-	PlayerConfiguration getplayerConfiguration(Colour colour){
+	private PlayerConfiguration getplayerConfiguration(Colour colour){
 		for(PlayerConfiguration item : this.playerConfigurations){
 			if(item.colour==colour)return item;
 		}
 		throw new NullPointerException();
 	}
 
-	Boolean gamehasplayer(Colour colour){
+	private Boolean gamehasplayer(Colour colour){
 		for(ScotlandYardPlayer p: this.mutablePlayers){
 			if(p.colour()==colour)return true;
 		}
