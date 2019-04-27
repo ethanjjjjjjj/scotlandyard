@@ -197,6 +197,9 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		}
 		return Collections.unmodifiableList(players); 
 	}
+	public ArrayList<ScotlandYardPlayer> getMutablePlayers(){
+		return this.mutablePlayers;
+	}
 
 	@Override
 	public Set<Colour> getWinningPlayers() {
