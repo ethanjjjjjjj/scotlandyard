@@ -32,3 +32,9 @@ cw-model/\.classpath
 cw-model/\.project
 
 *.prefs
+
+cw-ai/\.classpath
+
+cw-ai/\.project
+
+*.lst
