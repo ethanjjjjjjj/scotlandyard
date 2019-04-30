@@ -36,3 +36,5 @@ cw-model/\.project
 cw-ai/\.classpath
 
 cw-ai/\.project
+
+*.lst

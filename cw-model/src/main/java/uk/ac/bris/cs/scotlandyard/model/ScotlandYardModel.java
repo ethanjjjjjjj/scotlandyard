@@ -27,7 +27,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 	private ArrayList<ScotlandYardPlayer> mutablePlayers;
 	private ScotlandYardPlayer currentPlayer;
 	private int mrXLastSeen = 0;
-	private ArrayList<PlayerConfiguration> playerConfigurations;
 
 
 	public ScotlandYardModel(List<Boolean> rounds, Graph<Integer, Transport> graph,
@@ -52,7 +51,6 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 			this.mutablePlayers.add(new ScotlandYardPlayer(p.player, p.colour, p.location, p.tickets));
 		}
 		this.currentPlayer=this.mutablePlayers.get(0);
-		this.playerConfigurations=configurations;
 		this.checkTickets(configurations);
 		this.checkLocations(configurations);
 		this.checkForEmpty(this.rounds, this.graph, this.mrX);
@@ -268,12 +266,7 @@ public class ScotlandYardModel implements ScotlandYardGame,Consumer<Move> {
 		throw new NullPointerException();
 	}
 
-	private PlayerConfiguration getplayerConfiguration(Colour colour){
-		for(PlayerConfiguration item : this.playerConfigurations){
-			if(item.colour==colour)return item;
-		}
-		throw new NullPointerException();
-	}
+
 
 	private Boolean gamehasplayer(Colour colour){
 		for(ScotlandYardPlayer p: this.mutablePlayers){
