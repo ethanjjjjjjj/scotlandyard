@@ -12,7 +12,8 @@ import uk.ac.bris.cs.scotlandyard.model.Move;
 import uk.ac.bris.cs.scotlandyard.model.Player;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYardView;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYardPlayer;
-
+import uk.ac.bris.cs.scotlandyard.ui.ai.Pathfinding;
+import uk.ac.bris.cs.scotlandyard.model.ScotlandYardModel;
 
 @ManagedAI("Skynet")
 public class MyAI implements PlayerFactory {
@@ -33,11 +34,16 @@ public class MyAI implements PlayerFactory {
 				Consumer<Move> callback) {
 			// TODO do something interesting here; find the best move
 			// picks a random move
+			ScotlandYardModel model=(ScotlandYardModel)view;
 
+			ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
+			
 
-			//ArrayList<ScotlandYardPlayer> players=view.getMutablePlayers();
+			int bestscore=0;
+			Move bestMove;
+			for(Move item:moves){
 
-			for(Move item:moves){}
+			}
 
 			callback.accept(new ArrayList<>(moves).get(random.nextInt(moves.size())));
 

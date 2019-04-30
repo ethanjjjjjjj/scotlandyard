@@ -1,7 +1,6 @@
 package uk.ac.bris.cs.scotlandyard.ui.ai;
-
-//import uk.ac.bris.cs.scotlandyard.model.Move;
-
+import uk.ac.bris.cs.scotlandyard.model.Move;
+import java.util.Set;
 import uk.ac.bris.cs.scotlandyard.model.DoubleMove;
 import uk.ac.bris.cs.scotlandyard.model.TicketMove;
 import uk.ac.bris.cs.scotlandyard.model.PassMove;
@@ -14,24 +13,50 @@ public class Pathfinding{
     }
 
     //calculates the average number of hops it mr x is away from the detectives with the given move
-    public int averageMoveDist(TicketMove m){
-return 1;
+    public int averageMoveDist(int playerLocation,TicketMove m){
+        return minJumps(playerLocation, m.destination());
     }
 
-    public int averageMoveDist(DoubleMove m){
-        return 1;
+    public int averageMoveDist(int playerLocation,DoubleMove m){
+        return minJumps(playerLocation, m.secondMove().destination());
     }
 
-    public int averageMoveDist(PassMove m){
+    public int averageMoveDist(int playerLocation,PassMove m){
 
 
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE+1;
 
     }
-/*
-    public Move bestMove(Set<Move> moves){
-        
+    public int averageMoveDist(int playerLocation,Move m){
+
+
+        if(m instanceof DoubleMove){
+            return averageMoveDist(playerLocation,m);
+        }
+
+        else if(m instanceof TicketMove){
+            return averageMoveDist(playerLocation,m);
+        }
+        else if(m instanceof PassMove){
+            return averageMoveDist(playerLocation,m);
+        }
+        else return 0;
     }
-*/
+
+    
+
+
+    public Move bestMove(int playerLocation,Set<Move> moves){
+        int bestMoveScore=Integer.MIN_VALUE;
+        Move bestMove;
+        for(Move item:moves){
+            if(averageMoveDist(playerLocation,item)>bestMoveScore){
+                bestMoveScore=averageMoveDist(playerLocation,item);
+                bestMove=item;
+            }
+        }
+        return bestMove;
+    }
+
 
 }
