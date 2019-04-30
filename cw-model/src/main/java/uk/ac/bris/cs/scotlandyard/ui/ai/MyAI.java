@@ -36,16 +36,12 @@ public class MyAI implements PlayerFactory {
 			// picks a random move
 			ScotlandYardModel model=(ScotlandYardModel)view;
 
-			ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
+			//ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
 			
 
-			int bestscore=0;
-			Move bestMove;
-			for(Move item:moves){
-				if(Pathfinding.)
-			}
+			Move bestMove = Pathfinding.bestMove(model.getMutablePlayers().get(0).location(),moves,model);
 
-			callback.accept(new ArrayList<>(moves).get(random.nextInt(moves.size())));
+			callback.accept(bestMove);
 
 		}
 	}
