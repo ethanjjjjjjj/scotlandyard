@@ -15,12 +15,13 @@ import uk.ac.bris.cs.gamekit.graph.Node;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYardModel;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYardPlayer;
 import java.util.ArrayList;
+
 public class Pathfinding{
 
     //calculates the minimum number of moves to get from one node to another
-    public static int minJumps(int node1,int node2 ,ScotlandYardModel model){
+    public static int minJumps(int node1,int node2 ,ScotlandYardModel model)  throws InterruptedException{
 
-        Graph<Integer,Transport> graph = model.getGraph();
+        Graph<Integer, Transport> graph = model.getGraph();
         int[] nodeDistances=new int[graph.getNodes().size()+2];
         //Boolean[] visited = new Boolean[graph.getNodes().size()];
 
@@ -30,31 +31,40 @@ public class Pathfinding{
 
         
         ArrayList<Node<Integer>> queue=new ArrayList<>();
-        ArrayList<Node<Integer>> visited=new ArrayList<>();
         Node<Integer> startNode = graph.getNode(node1);
-
-        
+        Boolean[] visited2=new Boolean[graph.getNodes().size()+2];
+        for(int i=0;i<graph.getNodes().size()+2;i++){
+            visited2[i]=false;
+        }
         Node<Integer> endNode=graph.getNode(node2);
 
         nodeDistances[startNode.value()]=0;
         queue.add(startNode);
-        while(!visited.contains(endNode)){
-            //System.out.println("visited size: "+String.valueOf(visited.size()));
-            //System.out.println("queue size: "+String.valueOf(queue.size()));
-            
-            Node<Integer> v=queue.get(0);
-            queue.remove(0);
-            
-            //System.out.println("visited "+String.valueOf(v.value()));
-            ArrayList<Edge<Integer,Transport>> edges =new ArrayList<Edge<Integer,Transport>>(graph.getEdgesFrom(v));
-            for(Edge<Integer,Transport> item:edges){
-                if(!visited.contains(item.destination()) && !queue.contains(item.destination())){
-                queue.add(item.destination());
+        while(!visited2[endNode.value()]){
+            ArrayList<Thread> threads=new ArrayList<>();
+            ArrayList<DijkstraWorker> workers=new ArrayList<>();
+            for(Node<Integer> item:queue){
+                DijkstraWorker worker=new DijkstraWorker(graph,nodeDistances,item,visited2);
+                workers.add(worker);
+                threads.add(new Thread(worker));
+
+                queue.remove(item);
+                
             }
-                if(!(nodeDistances[item.destination().value()]<(nodeDistances[v.value()]+1)))
-                nodeDistances[item.destination().value()]=nodeDistances[v.value()]+1;
+            for(Thread t:threads){
+                t.start();
+
             }
-            visited.add(v);
+            for(Thread t:threads){
+                t.join();
+
+            }
+            for(DijkstraWorker d:workers){
+                for(Node<Integer> item:d.getqueue()){
+                    queue.add(item);
+                }
+            }
+            
         }
 
         //System.out.println("mindistance"+String.valueOf(nodeDistances[endNode.value()]));
@@ -63,11 +73,11 @@ public class Pathfinding{
     }
 
     //calculates the average number of hops it mr x is away from the detectives with the given move
-    public static int averageMoveDist(int playerLocation,TicketMove m,ScotlandYardModel model){
+    public static int averageMoveDist(int playerLocation,TicketMove m,ScotlandYardModel model)  throws InterruptedException{
         return minJumps(playerLocation, m.destination(),model);
     }
 
-    public static int averageMoveDist(int playerLocation,DoubleMove m,ScotlandYardModel model){
+    public static int averageMoveDist(int playerLocation,DoubleMove m,ScotlandYardModel model)  throws InterruptedException {
         return minJumps(playerLocation, m.secondMove().destination(),model);
     }
 
@@ -77,8 +87,10 @@ public class Pathfinding{
         return Integer.MIN_VALUE+1;
 
     }
-    public static int averageMoveDist(Move m,ScotlandYardModel model){
-        ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
+    public static int averageMoveDist(Move m,ScotlandYardModel model)  throws InterruptedException{
+        ArrayList<ScotlandYardPlayer> playersfirst = model.getMutablePlayers();
+        ArrayList<ScotlandYardPlayer> players= new ArrayList<>(playersfirst);
+
         int distanceSum=0;
         int location;
         for(ScotlandYardPlayer p:players){
@@ -102,8 +114,8 @@ public class Pathfinding{
     
 
 
-    public static Move bestMove(Set<Move> moves,ScotlandYardModel model){
-        int bestMoveScore=Integer.MIN_VALUE;
+    public static Move bestMove(Set<Move> moves,ScotlandYardModel model)  throws InterruptedException{
+        int bestMoveScore = Integer.MIN_VALUE;
         Move bestMove=null;
         for(Move item:moves){
             if(averageMoveDist(item,model)>bestMoveScore){

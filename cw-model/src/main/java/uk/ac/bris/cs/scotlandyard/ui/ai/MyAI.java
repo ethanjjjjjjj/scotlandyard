@@ -38,10 +38,15 @@ public class MyAI implements PlayerFactory {
 
 			//ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
 			
-
+			try{
 			Move bestMove = Pathfinding.bestMove(moves,model);
 			System.out.println(bestMove);
 			callback.accept(bestMove);
+		}
+			catch(java.lang.InterruptedException e){
+				System.out.println(e);
+			}
+			
 
 		}
 	}
