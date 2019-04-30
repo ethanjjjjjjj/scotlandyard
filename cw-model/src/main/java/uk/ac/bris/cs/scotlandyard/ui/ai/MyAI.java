@@ -39,7 +39,7 @@ public class MyAI implements PlayerFactory {
 			//ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
 			
 
-			Move bestMove = Pathfinding.bestMove(model.getMutablePlayers().get(0).location(),moves,model);
+			Move bestMove = Pathfinding.bestMove(moves,model);
 
 			callback.accept(bestMove);
 
