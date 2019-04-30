@@ -1,5 +1,7 @@
 package uk.ac.bris.cs.scotlandyard.ui.ai;
 
+
+import java.util.Collection;
 import uk.ac.bris.cs.scotlandyard.model.Move;
 import java.util.Set;
 import uk.ac.bris.cs.scotlandyard.model.DoubleMove;
@@ -54,12 +56,13 @@ public class Pathfinding{
   
             // Update dist value of the adjacent vertices of the 
             // picked vertex. 
+            Collection<Edge<Integer,Transport>> edges = graph.getEdgesFrom(graph.getNode(j));
             for (int v = 1; v <= totalNodes+1; v++){ 
                 // Update dist[v] only if is not in sptSet, there is an 
                 // edge from u to v, and total weight of path from src to 
                 // v through u is smaller than current value of dist[v] 
                 if (!visited[v] && distance[u]!=0 && distance[u] != Integer.MAX_VALUE &&
-                distance[u]+distance[v] < distance[v]){ 
+                distance[u]+distance[v] < distance[v] && graph.getEdgesFrom(graph.getNode())){ 
                     distance[v] = distance[u] + 1; 
                 }
             }
