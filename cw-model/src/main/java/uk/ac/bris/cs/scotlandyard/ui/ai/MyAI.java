@@ -40,7 +40,7 @@ public class MyAI implements PlayerFactory {
 			
 
 			Move bestMove = Pathfinding.bestMove(moves,model);
-
+			System.out.println(bestMove);
 			callback.accept(bestMove);
 
 		}

@@ -17,57 +17,49 @@ import uk.ac.bris.cs.scotlandyard.model.ScotlandYardPlayer;
 import java.util.ArrayList;
 public class Pathfinding{
 
-    public static int minDistance(int distance[], Boolean visited[],int total) { 
-        int min = Integer.MAX_VALUE;
-        int min_index=-1; 
-  
-        for (int v = 1; v <= total+1; v++) {
-            if (!visited[v] && distance[v] <= min){ 
-                min = distance[v]; 
-                min_index = v; 
-            } 
-        }
-        return min_index; 
-    } 
-
     //calculates the minimum number of moves to get from one node to another
     public static int minJumps(int node1,int node2 ,ScotlandYardModel model){
+
         Graph<Integer,Transport> graph = model.getGraph();
-        Node<Integer> start = graph.getNode(node1);
-        Node<Integer> end = graph.getNode(node2);
-        int totalNodes = graph.getNodes().size();
-        Boolean[] visited = new Boolean[totalNodes+1];
-        int[] distance = new int[totalNodes+1];
+        int[] nodeDistances=new int[graph.getNodes().size()+2];
+        //Boolean[] visited = new Boolean[graph.getNodes().size()];
 
-        for (int i = 1; i <= totalNodes+1; i++) { 
-            distance[i] = Integer.MAX_VALUE; 
-            visited[i] = false; 
-        } 
-        distance[node1] = 0;
+        for(int i=1;i<graph.getNodes().size()+2;i++){
+            nodeDistances[i]=Integer.MAX_VALUE;
+        }
 
-        for (int j = 1; j <= totalNodes+1; j++) { 
-            // Pick the minimum distance vertex from the set of vertices 
-            // not yet processed. u is always equal to src in first 
-            // iteration. 
-            int u = minDistance(distance, visited,totalNodes); 
-  
-            // Mark the picked vertex as processed 
-            visited[u] = true; 
-  
-            // Update dist value of the adjacent vertices of the 
-            // picked vertex. 
-            Collection<Edge<Integer,Transport>> edges = graph.getEdgesFrom(graph.getNode(j));
-            for (int v = 1; v <= totalNodes+1; v++){ 
-                // Update dist[v] only if is not in sptSet, there is an 
-                // edge from u to v, and total weight of path from src to 
-                // v through u is smaller than current value of dist[v] 
-                if (!visited[v] && distance[u]!=0 && distance[u] != Integer.MAX_VALUE &&
-                distance[u]+distance[v] < distance[v] && graph.getEdgesFrom(graph.getNode())){ 
-                    distance[v] = distance[u] + 1; 
-                }
+        
+        ArrayList<Node<Integer>> queue=new ArrayList<>();
+        ArrayList<Node<Integer>> visited=new ArrayList<>();
+        Node<Integer> startNode = graph.getNode(node1);
+
+        
+        Node<Integer> endNode=graph.getNode(node2);
+
+        nodeDistances[startNode.value()]=0;
+        queue.add(startNode);
+        while(!visited.contains(endNode)){
+            //System.out.println("visited size: "+String.valueOf(visited.size()));
+            //System.out.println("queue size: "+String.valueOf(queue.size()));
+            
+            Node<Integer> v=queue.get(0);
+            queue.remove(0);
+            
+            //System.out.println("visited "+String.valueOf(v.value()));
+            ArrayList<Edge<Integer,Transport>> edges =new ArrayList<Edge<Integer,Transport>>(graph.getEdgesFrom(v));
+            for(Edge<Integer,Transport> item:edges){
+                if(!visited.contains(item.destination()) && !queue.contains(item.destination())){
+                queue.add(item.destination());
             }
-        } 
-        return distance[node2];
+                if(!(nodeDistances[item.destination().value()]<(nodeDistances[v.value()]+1)))
+                nodeDistances[item.destination().value()]=nodeDistances[v.value()]+1;
+            }
+            visited.add(v);
+        }
+
+        //System.out.println("mindistance"+String.valueOf(nodeDistances[endNode.value()]));
+        return nodeDistances[endNode.value()];
+
     }
 
     //calculates the average number of hops it mr x is away from the detectives with the given move
@@ -103,6 +95,7 @@ public class Pathfinding{
         }
         
     }
+    
     return distanceSum/players.size();
 }
 
