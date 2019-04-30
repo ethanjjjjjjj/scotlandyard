@@ -42,7 +42,7 @@ public class MyAI implements PlayerFactory {
 			int bestscore=0;
 			Move bestMove;
 			for(Move item:moves){
-
+				if(Pathfinding.)
 			}
 
 			callback.accept(new ArrayList<>(moves).get(random.nextInt(moves.size())));
