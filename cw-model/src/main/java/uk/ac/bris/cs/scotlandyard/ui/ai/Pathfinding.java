@@ -2,6 +2,7 @@ package uk.ac.bris.cs.scotlandyard.ui.ai;
 
 
 import java.util.Collection;
+import java.util.List;
 import uk.ac.bris.cs.scotlandyard.model.Move;
 import java.util.Set;
 import uk.ac.bris.cs.scotlandyard.model.DoubleMove;
@@ -87,9 +88,12 @@ public class Pathfinding{
     }
     public static int averageMoveDist(Move m,ScotlandYardModel model){
         ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
+        ArrayList<ScotlandYardPlayer> detectives = new ArrayList<>(players);
+        detectives.remove(0);
+
         int distanceSum=0;
         int location;
-        for(ScotlandYardPlayer p:players){
+        for(ScotlandYardPlayer p:detectives){
             location=p.location();
         if(m instanceof DoubleMove){
             distanceSum+= averageMoveDist(location,(DoubleMove)m,model);
@@ -103,7 +107,7 @@ public class Pathfinding{
         }
         
     }
-    return distanceSum/players.size();
+    return distanceSum/detectives.size();
 }
 
     
