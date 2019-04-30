@@ -38,3 +38,5 @@ cw-ai/\.classpath
 cw-ai/\.project
 
 *.lst
+
+cw-ai/bin/\.project
