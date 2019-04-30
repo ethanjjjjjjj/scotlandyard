@@ -52,7 +52,7 @@ public class Pathfinding{
 
     public Move bestMove(int playerLocation,Set<Move> moves){
         int bestMoveScore=Integer.MIN_VALUE;
-        Move bestMove;
+        Move bestMove=null;
         for(Move item:moves){
             if(averageMoveDist(playerLocation,item)>bestMoveScore){
                 bestMoveScore=averageMoveDist(playerLocation,item);
