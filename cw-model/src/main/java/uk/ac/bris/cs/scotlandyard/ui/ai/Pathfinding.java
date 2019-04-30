@@ -9,6 +9,8 @@ import uk.ac.bris.cs.gamekit.graph.Graph;
 import uk.ac.bris.cs.gamekit.graph.ImmutableGraph;
 import uk.ac.bris.cs.gamekit.graph.Node;
 import uk.ac.bris.cs.scotlandyard.model.ScotlandYardModel;
+import uk.ac.bris.cs.scotlandyard.model.ScotlandYardPlayer;
+import java.util.ArrayList;
 public class Pathfinding{
 
     //calculates the minimum number of moves to get from one node to another
@@ -31,31 +33,36 @@ public class Pathfinding{
         return Integer.MIN_VALUE+1;
 
     }
-    public static int averageMoveDist(int playerLocation,Move m,ScotlandYardModel model){
-
-
+    public static int averageMoveDist(Move m,ScotlandYardModel model){
+        ArrayList<ScotlandYardPlayer> players=model.getMutablePlayers();
+        int distanceSum=0;
+        int location;
+        for(ScotlandYardPlayer p:players){
+            location=p.location();
         if(m instanceof DoubleMove){
-            return averageMoveDist(playerLocation,m,model);
+            distanceSum+= averageMoveDist(location,(DoubleMove)m,model);
         }
 
         else if(m instanceof TicketMove){
-            return averageMoveDist(playerLocation,m,model);
+            distanceSum+= averageMoveDist(location,(TicketMove)m,model);
         }
         else if(m instanceof PassMove){
-            return averageMoveDist(playerLocation,m,model);
+            distanceSum+= averageMoveDist(location ,(PassMove)m,model);
         }
-        else return 0;
+        
     }
+    return distanceSum/players.size();
+}
 
     
 
 
-    public static Move bestMove(int playerLocation,Set<Move> moves,ScotlandYardModel model){
+    public static Move bestMove(Set<Move> moves,ScotlandYardModel model){
         int bestMoveScore=Integer.MIN_VALUE;
         Move bestMove=null;
         for(Move item:moves){
-            if(averageMoveDist(playerLocation,item,model)>bestMoveScore){
-                bestMoveScore=averageMoveDist(playerLocation,item,model);
+            if(averageMoveDist(item,model)>bestMoveScore){
+                bestMoveScore=averageMoveDist(item,model);
                 bestMove=item;
             }
         }
