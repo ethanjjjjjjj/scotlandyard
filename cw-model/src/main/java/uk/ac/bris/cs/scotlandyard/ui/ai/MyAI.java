@@ -24,7 +24,6 @@ public class MyAI implements PlayerFactory {
 		public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
 			ScotlandYardModel model=(ScotlandYardModel)view;
 			Move bestMove = Pathfinding.bestMove(moves,model);
-			System.out.println(bestMove);
 			callback.accept(bestMove);
 		}
 	}
