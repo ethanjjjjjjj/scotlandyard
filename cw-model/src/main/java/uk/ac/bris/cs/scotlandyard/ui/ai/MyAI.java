@@ -23,11 +23,8 @@ public class MyAI implements PlayerFactory {
 		@Override
 		public void makeMove(ScotlandYardView view, int location, Set<Move> moves, Consumer<Move> callback) {
 			ScotlandYardModel model=(ScotlandYardModel)view;
-			long before = System.currentTimeMillis();
 			Move bestMove = Pathfinding.bestMove(moves,model);
-			long after = System.currentTimeMillis();
 			System.out.println(bestMove);
-			System.out.println("Time taken:  "+ (after - before));
 			callback.accept(bestMove);
 		}
 	}
